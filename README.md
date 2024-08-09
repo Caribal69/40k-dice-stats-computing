@@ -6,7 +6,16 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 * An interface, coded with `kivy` to enable android app. In this app, you can compute stats and compare results on typical enemy stats (marine, tank, ...)
 (see [main.py](main.py))
 
- [[_TOC_]]
+## Table of Contents
+1. [Presentation of the app](#presentation-of-the-app)
+2. [Questions](#questions)
+   - [How to start](#how-to-start)
+   - [How to add more profiles (datasheet) ?](#how-to-add-more-profiles-datasheet)
+   - [Useful links](#Useful-links)
+   - [Acronyms](#Acronyms)
+3. [Elements for developers](#Elements-for-developers)
+   - [How to install (developers)](#How-to-install-developers)
+   - [Architecture of dirs](#Architecture-of-dirs)
 
 ## Presentation of the app
 
@@ -21,7 +30,7 @@ an unit / weapon on a glimpse. Here are the typical enemy considered (their stat
 * heavy imperial knight
 
 
-## Questions ?
+## Questions
 
 ### How to start
 
