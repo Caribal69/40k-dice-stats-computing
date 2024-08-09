@@ -13,15 +13,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build with Buildozer
-        uses: Caribal69/40k-dice-stats-computing@main
-        id: buildozer
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          workdir: .
-          buildozer_version: stable
+          python-version: '3.11'  # Specify the Python version you need
+
+#      - name: Build with Buildozer
+#        uses: Caribal69/40k-dice-stats-computing@v1
+#        id: buildozer
+#        with:
+#          workdir: .
+#          buildozer_version: stable
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: package
+#          path: ${{ steps.buildozer.outputs.filename }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-setuptools python3-pip openjdk-11-jdk unzip
+          pip install --upgrade pip
+          pip install cython==0.29.21  # or the specific version you need
+
+      - name: Install Buildozer
+        run: |
+          pip install buildozer
+
+      - name: Build with Buildozer
+        run: |
+          buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: .  # Adjust the path to where your APK is generated
