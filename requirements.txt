@@ -1,0 +1,18 @@
+# List here all python package necessary to run the application
+kivy
+kivy-deps.angle
+kivy-deps.glew
+kivy-deps.gstreamer
+kivy-deps.sdl2
+kivymd
+
+pytest
+numpy
+pandas
+ipywidgets
+voila
+tox
+# Working in april 2024
+jupyter==1.0.0
+jupyterlab==4.1.8
+pretty-html-table
