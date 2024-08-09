@@ -5,10 +5,10 @@ package.name = testapp
 package.domain = org.test
 
 source.dir = .
-source.include_exts = py,png,jpg,kv,atlas
+source.include_exts = py,png,jpg,kv,atlas, csv
 
 version = 0.1
-requirements = python3,kivy
+requirements = python3.11,kivy,kivy-md,numpy,pandas,
 
 orientation = portrait
 fullscreen = 0
@@ -21,4 +21,5 @@ ios.ios_deploy_url = https://github.com/phonegap/ios-deploy
 ios.ios_deploy_branch = 1.7.0
 
 [buildozer]
-log_level = 2
+log_level = 1
+# log_level = 2  # debug

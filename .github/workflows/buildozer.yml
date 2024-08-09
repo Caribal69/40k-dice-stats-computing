@@ -1,6 +1,7 @@
 # Documentation here: https://github.com/ArtemSBulgakov/buildozer-action
 name: Build
-on: [push, pull_request]
+# Launch every time `push` action is performed
+on: [push]
 
 jobs:
   # Build job. Builds app for Android with Buildozer
@@ -9,9 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # Enable checkout and github actions
       - name: Checkout
         uses: actions/checkout@v2
 
+      # Use an already existing git repo to launch `buildozer build`
+      # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
@@ -19,6 +24,7 @@ jobs:
           workdir: .
           buildozer_version: stable
 
+      # Afeter last step (APK creation) store it on github.
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
