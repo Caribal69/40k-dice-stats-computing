@@ -15,16 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-
-      - uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ github.run_id }}-${{ hashFiles('buildozer.spec') }}
+#      - name: Cache Buildozer global directory
+#        uses: actions/cache@v2
+#        with:
+#          path: .buildozer_global
+#          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+#
+#      - uses: actions/cache@v2
+#        with:
+#          path: .buildozer
+#          key: ${{ runner.os }}-${{ github.run_id }}-${{ hashFiles('buildozer.spec') }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -42,8 +42,8 @@ jobs:
           pip install buildozer
 
       - name: Set up Android SDK
-        env:
-          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        env:
+#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
         run: |
           mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
           curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
@@ -60,16 +60,16 @@ jobs:
 #          command: buildozer -v android debug
 
       - name: Accept Licenses
-        env:
-          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        env:
+#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
         run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
 
 
       - name: Build APK with Buildozer
-        env:
-          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        env:
+#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
         run: buildozer -v android debug
 
 #      - name: Build with Buildozer
