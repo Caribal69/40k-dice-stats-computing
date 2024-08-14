@@ -57,7 +57,13 @@ jobs:
 #          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
 #        uses: ArtemSBulgakov/buildozer-action@v1
 #        with:
-#          command: android debug
+#          command: buildozer -v android debug
+
+      - name: Accept Licenses
+        env:
+          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+        run: |
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Build APK with Buildozer
         env:
