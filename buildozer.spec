@@ -20,19 +20,19 @@ source.include_patterns = src/*, data/*
 orientation = portrait
 fullscreen = 0
 
-# TEST
-# ---------
-# (int) Android API to use
-android.api = 33
-
-# (int) Minimum API required
-android.minapi = 21
-
-# (int) Android SDK version to use
-android.sdk = 33
-
-# (str) Android NDK version to use
-android.ndk = 23b
+## TEST
+## ---------
+## (int) Android API to use
+#android.api = 33
+#
+## (int) Minimum API required
+#android.minapi = 21
+#
+## (int) Android SDK version to use
+#android.sdk = 33
+#
+## (str) Android NDK version to use
+#android.ndk = 23b
 
 # ---------
 
