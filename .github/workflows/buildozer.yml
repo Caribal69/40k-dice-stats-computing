@@ -26,15 +26,23 @@ jobs:
         # run: sudo apt-get update && sudo apt-get install -y gettext
         run: sudo apt-get update && sudo apt-get install -y autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev
 
+      - name: Install Buildozer and dependencies
+        run: |
+          pip install --upgrade pip
+          pip install buildozer
+
+      - name: Build with Buildozer
+        run: buildozer -v android debug
+
       # Use an already existing git repo to launch `buildozer build`
       # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-#          repository_root: main
-          workdir: .
-          buildozer_version: stable
+#      - name: Build with Buildozer
+#        uses: ArtemSBulgakov/buildozer-action@v1
+#        id: buildozer
+#        with:
+#          # repository_root: main
+#          workdir: .
+#          buildozer_version: stable
 
       # After last step (APK creation) store it on github.
       - name: Upload artifacts
