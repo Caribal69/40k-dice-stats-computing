@@ -14,8 +14,8 @@ jobs:
       # Enable checkout and github actions
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          path: main
+#        with:
+#          path: main
 
       # Use an already existing git repo to launch `buildozer build`
       # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
@@ -23,7 +23,7 @@ jobs:
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          repository_root: main
+#          repository_root: main
           workdir: .
           buildozer_version: stable
 

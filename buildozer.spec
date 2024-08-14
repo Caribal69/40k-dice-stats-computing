@@ -4,8 +4,9 @@ title = Test App
 package.name = testapp
 package.domain = org.test.appname
 
+# (list) Source files to include (let's include everything in the src directory)
 source.dir = .
-source.include_exts = py,png,jpg,kv,atlas, csv
+source.include_exts = py,png,jpg,kv,atlas,csv
 
 version = 0.1
 requirements = python3,kivy,kivy-md,numpy,pandas
@@ -13,7 +14,6 @@ requirements = python3,kivy,kivy-md,numpy,pandas
 
 # (list) List of inclusions using pattern matching
 source.include_patterns = src/*, data/*
-
 
 orientation = portrait
 fullscreen = 0
