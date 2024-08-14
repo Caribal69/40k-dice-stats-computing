@@ -1,94 +1,115 @@
-# Documentation here: https://github.com/ArtemSBulgakov/buildozer-action
-name: Build
-# Launch every time `push` action is performed
-on: [push]
+## Documentation here: https://github.com/ArtemSBulgakov/buildozer-action
+#name: Build
+## Launch every time `push` action is performed
+#on: [push]
+#
+#jobs:
+#  # Build job. Builds app for Android with Buildozer
+#  build-android:
+#    name: Build for Android
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#
+#      # Enable checkout and github actions
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+##      - name: Cache Buildozer global directory
+##        uses: actions/cache@v2
+##        with:
+##          path: .buildozer_global
+##          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+##
+##      - uses: actions/cache@v2
+##        with:
+##          path: .buildozer
+##          key: ${{ runner.os }}-${{ github.run_id }}-${{ hashFiles('buildozer.spec') }}
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: '3.11'  # Ensure you are using a compatible Python version
+#
+#      - name: Install dependencies
+#        run: |
+#          sudo apt-get update && sudo apt-get install -y python3-distutils autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev
+#          sudo apt-get install -y python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev
+#          sudo apt-get install libffi-dev
+#          pip install --upgrade pip
+#          pip install cython==0.29.19
+#          pip install -r requirements.txt
+#          pip install buildozer
+#
+#      - name: Set up Android SDK
+##        env:
+##          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        run: |
+#          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+#          curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+#          unzip -q sdk-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
+#          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
+#          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+#          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
+#
+##      - name: Build with Buildozer
+##        env:
+##          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+##        uses: ArtemSBulgakov/buildozer-action@v1
+##        with:
+##          command: buildozer -v android debug
+#
+#      - name: Accept Licenses
+##        env:
+##          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        run: |
+#          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+#          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
+#
+#
+#      - name: Build APK with Buildozer
+##        env:
+##          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        run: buildozer -v android debug
+#
+##      - name: Build with Buildozer
+##        env:
+##          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+##        run: |
+##          buildozer -v android debug
+#
+#
+#      # Use an already existing git repo to launch `buildozer build`
+#      # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
+##      - name: Build with Buildozer
+##        uses: ArtemSBulgakov/buildozer-action@v1
+##        id: buildozer
+##        with:
+##          command: buildozer -v android debug
+##          # repository_root: main
+##          workdir: .
+##          buildozer_version: master
+#
+#      # After last step (APK creation) store it on github.
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: package
+#          path: ${{ steps.buildozer.outputs.filename }}
+on:
+  push:
+    branches: [ main ]
 
 jobs:
-  # Build job. Builds app for Android with Buildozer
-  build-android:
-    name: Build for Android
+  build:
     runs-on: ubuntu-latest
-
     steps:
-
-      # Enable checkout and github actions
-      - name: Checkout
-        uses: actions/checkout@v2
-
-#      - name: Cache Buildozer global directory
-#        uses: actions/cache@v2
-#        with:
-#          path: .buildozer_global
-#          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-#
-#      - uses: actions/cache@v2
-#        with:
-#          path: .buildozer
-#          key: ${{ runner.os }}-${{ github.run_id }}-${{ hashFiles('buildozer.spec') }}
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
+      - name: Build APK
+        uses: digreatbrian/buildozer-action@v1
         with:
-          python-version: '3.11'  # Ensure you are using a compatible Python version
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y python3-distutils autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev
-          sudo apt-get install -y python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev
-          sudo apt-get install libffi-dev
-          pip install --upgrade pip
-          pip install cython==0.29.19
-          pip install -r requirements.txt
-          pip install buildozer
-
-      - name: Set up Android SDK
-#        env:
-#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-        run: |
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
-          curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-          unzip -q sdk-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
-          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
-
-#      - name: Build with Buildozer
-#        env:
-#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-#        uses: ArtemSBulgakov/buildozer-action@v1
-#        with:
-#          command: buildozer -v android debug
-
-      - name: Accept Licenses
-#        env:
-#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-        run: |
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
-
-
-      - name: Build APK with Buildozer
-#        env:
-#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-        run: buildozer -v android debug
-
-#      - name: Build with Buildozer
-#        env:
-#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-#        run: |
-#          buildozer -v android debug
-
-
-      # Use an already existing git repo to launch `buildozer build`
-      # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
-#      - name: Build with Buildozer
-#        uses: ArtemSBulgakov/buildozer-action@v1
-#        id: buildozer
-#        with:
-#          command: buildozer -v android debug
-#          # repository_root: main
-#          workdir: .
-#          buildozer_version: master
+          buildozer-cmd: buildozer -v android debug
+          work-dir: . # directory where your main.py file rests
 
       # After last step (APK creation) store it on github.
       - name: Upload artifacts
