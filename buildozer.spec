@@ -11,6 +11,8 @@ source.include_exts = py,png,jpg,kv,atlas,csv
 version = 0.1
 requirements = python3,kivy,kivy-md,numpy,pandas
 
+# (str) python-for-android branch to use, defaults to master
+p4a.branch = master
 
 # (list) List of inclusions using pattern matching
 source.include_patterns = src/*, data/*
