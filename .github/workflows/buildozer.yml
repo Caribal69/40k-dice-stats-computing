@@ -14,8 +14,12 @@ jobs:
       # Enable checkout and github actions
       - name: Checkout
         uses: actions/checkout@v2
-#        with:
-#          path: main
+
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v2
+        with:
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -23,47 +27,25 @@ jobs:
           python-version: '3.11'  # Ensure you are using a compatible Python version
 
       - name: Install dependencies
-        # run: sudo apt-get update && sudo apt-get install -y gettext
         run: |
           sudo apt-get update && sudo apt-get install -y python3-distutils autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev
           sudo apt-get install -y python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev
           sudo apt-get install libffi-dev
-          
-      - name: Install Android SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          unzip commandlinetools-linux-9477386_latest.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
-
-      - name: Set environment variables
-        run: |
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$PATH:$HOME/android-sdk/platform-tools:$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_ENV
-
-      - name: Install Buildozer and dependencies
-        run: |
           pip install --upgrade pip
           pip install cython==0.29.19
           pip install -r requirements.txt
           pip install buildozer
 
-      - name: Build with Buildozer
-        run: buildozer -v android debug
-
       # Use an already existing git repo to launch `buildozer build`
       # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
-#      - name: Build with Buildozer
-#        uses: ArtemSBulgakov/buildozer-action@v1
-#        id: buildozer
-#        with:
-#          # repository_root: main
-#          workdir: .
-#          buildozer_version: stable
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer -v android debug
+          # repository_root: main
+          workdir: .
+          buildozer_version: master
 
       # After last step (APK creation) store it on github.
       - name: Upload artifacts
