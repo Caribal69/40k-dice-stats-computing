@@ -21,5 +21,5 @@ ios.ios_deploy_url = https://github.com/phonegap/ios-deploy
 ios.ios_deploy_branch = 1.7.0
 
 [buildozer]
-log_level = 1
+log_level = 3
 # log_level = 2  # debug
