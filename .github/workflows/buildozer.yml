@@ -17,8 +17,14 @@ jobs:
 #        with:
 #          path: main
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'  # Ensure you are using a compatible Python version
+
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y gettext
+        # run: sudo apt-get update && sudo apt-get install -y gettext
+        run: sudo apt-get update && sudo apt-get install -y autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev
 
       # Use an already existing git repo to launch `buildozer build`
       # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
