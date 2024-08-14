@@ -16,12 +16,27 @@ from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.selectioncontrol.selectioncontrol import MDCheckbox
 from kivymd.uix.textfield import MDTextField
+from time import time
+
+import os
+import sys
+
+# Get the directory of the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory
+parent_dir = os.path.dirname(current_dir)
+
+# Add the parent directory to the Python path
+sys.path.insert(0, parent_dir)
+
+
 
 from src.utils import opponent_datasheets
 from src.workflow import launch_workflow
 from src.dice import compute_average_enemy_dead, compute_average_hp_lost
 
-from time import time
+
 
 
 class Main(MDApp):

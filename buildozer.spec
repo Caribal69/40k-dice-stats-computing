@@ -4,11 +4,11 @@ title = Test App
 package.name = testapp
 package.domain = org.test
 
-source.dir = src
+source.dir = .
 source.include_exts = py,png,jpg,kv,atlas, csv
 
 version = 0.1
-requirements = python3,kivy,kivy-md,numpy,pandas,
+requirements = python3,kivy,kivy-md,numpy,pandas
 
 orientation = portrait
 fullscreen = 0

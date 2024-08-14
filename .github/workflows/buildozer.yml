@@ -24,7 +24,7 @@ jobs:
         id: buildozer
         with:
           repository_root: main
-          workdir: src
+          workdir: .
           buildozer_version: stable
 
       # After last step (APK creation) store it on github.
