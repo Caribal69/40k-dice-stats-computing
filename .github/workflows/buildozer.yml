@@ -17,6 +17,9 @@ jobs:
 #        with:
 #          path: main
 
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y gettext
+
       # Use an already existing git repo to launch `buildozer build`
       # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
       - name: Build with Buildozer
