@@ -52,12 +52,17 @@ jobs:
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
 
-      - name: Build with Buildozer
+#      - name: Build with Buildozer
+#        env:
+#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        uses: ArtemSBulgakov/buildozer-action@v1
+#        with:
+#          command: android debug
+
+      - name: Build APK with Buildozer
         env:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-        uses: ArtemSBulgakov/buildozer-action@v1
-        with:
-          command: android debug
+        run: buildozer -v android debug
 
 #      - name: Build with Buildozer
 #        env:
