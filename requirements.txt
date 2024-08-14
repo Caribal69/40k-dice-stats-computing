@@ -1,9 +1,9 @@
 # List here all python package necessary to run the application
 kivy
-kivy-deps.angle
-kivy-deps.glew
-kivy-deps.gstreamer
-kivy-deps.sdl2
+# kivy-deps.angle
+# kivy-deps.glew
+# kivy-deps.gstreamer
+# kivy-deps.sdl2
 kivymd
 
 pytest
