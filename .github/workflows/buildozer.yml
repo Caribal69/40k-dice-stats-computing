@@ -50,13 +50,20 @@ jobs:
           unzip -q sdk-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
           mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
 
       - name: Build with Buildozer
         env:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-        run: |
-          buildozer -v android debug
+        uses: ArtemSBulgakov/buildozer-action@v1
+        with:
+          command: android debug
+
+#      - name: Build with Buildozer
+#        env:
+#          ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+#        run: |
+#          buildozer -v android debug
 
 
       # Use an already existing git repo to launch `buildozer build`
