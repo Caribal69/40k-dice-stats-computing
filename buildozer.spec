@@ -20,6 +20,34 @@ source.include_patterns = src/*, data/*
 orientation = portrait
 fullscreen = 0
 
+# TEST
+# ---------
+# (int) Android API to use
+android.api = 33
+
+# (int) Minimum API required
+android.minapi = 21
+
+# (int) Android SDK version to use
+android.sdk = 33
+
+# (str) Android NDK version to use
+android.ndk = 23b
+
+# ---------
+
+
+
+
+
+
+
+
+
+
+
+
+
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 android.arch = armeabi-v7a
 
