@@ -14,6 +14,8 @@ jobs:
       # Enable checkout and github actions
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          path: main
 
       # Use an already existing git repo to launch `buildozer build`
       # Use https://github.com/ArtemSBulgakov/buildozer-action/tree/master
@@ -21,10 +23,11 @@ jobs:
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          workdir: .
+          repository_root: main
+          workdir: src
           buildozer_version: stable
 
-      # Afeter last step (APK creation) store it on github.
+      # After last step (APK creation) store it on github.
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:

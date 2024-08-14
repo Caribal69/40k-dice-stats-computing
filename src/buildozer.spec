@@ -4,7 +4,7 @@ title = Test App
 package.name = testapp
 package.domain = org.test
 
-source.dir = .
+source.dir = src
 source.include_exts = py,png,jpg,kv,atlas, csv
 
 version = 0.1
