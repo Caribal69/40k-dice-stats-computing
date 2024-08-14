@@ -55,7 +55,9 @@ jobs:
       - name: Buildozer build app
         run: yes | buildozer -v android debug || buildozer -v android debug
         # run cmd1 and cmd2 if cmd1 failed
-#        run: buildozer -v android debug
+        # yes | buildozer ...  this cmd finish to fail ("yes not recognized") but permits to accept licence,
+        # || is used then to re-run buildozer with a licence accepted
+
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
