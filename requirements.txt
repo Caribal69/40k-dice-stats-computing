@@ -1,4 +1,5 @@
 # List here all python package necessary to run the application
+distutils
 kivy
 # kivy-deps.angle
 # kivy-deps.glew
