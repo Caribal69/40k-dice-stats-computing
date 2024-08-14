@@ -2,7 +2,10 @@
 # by Kasper Arfman
 # https://gist.github.com/zl475505/25245e8d28b13b3273e8bae1a63c4af2
 name: Build APK
-on: [push]
+on:
+  push:
+    branches:
+      - main
 jobs:
   build-android:
     name: Build for Android
@@ -58,9 +61,27 @@ jobs:
         # yes | buildozer ...  this cmd finish to fail ("yes not recognized") but permits to accept licence,
         # || is used then to re-run buildozer with a licence accepted
 
-
+      # Make APK created file available in "Action/ac
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
           path: bin/*.apk
+          # path: ${{ steps.buildozer.outputs.filename }}
+
+      # Push result into branch "data" (in dir "bin/")
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Move to branch data
+        run: git checkout data
+
+      - name: Commit and Push Artifact to branch "data"
+        run: |
+          git add bin/*
+          git commit -m "Add artifact to bin directory"
+          git push origin data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
