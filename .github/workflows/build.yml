@@ -80,7 +80,7 @@ jobs:
 
       - name: Commit and Push Artifact to branch "data"
         run: |
-          git add .
+          git add *apk
           git commit -m "Add artifact to bin directory"
           git push origin data
         env:

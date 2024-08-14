@@ -4,6 +4,7 @@ study/
 old/
 !.gitignore
 todo.md
+.buildozer
 
 # Typical Gitignore provided by github
 # see: https://github.com/github/gitignore/blob/main/Python.gitignore
