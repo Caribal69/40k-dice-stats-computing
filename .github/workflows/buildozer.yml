@@ -49,7 +49,7 @@ jobs:
           curl -fo sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
           unzip -q sdk-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
           mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
 
 #      - name: Build with Buildozer
@@ -64,6 +64,8 @@ jobs:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
         run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-31" "build-tools;35.0.0"
+
 
       - name: Build APK with Buildozer
         env:
