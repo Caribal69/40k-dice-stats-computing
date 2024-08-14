@@ -46,7 +46,8 @@ jobs:
           export PATH=$JAVA_HOME/bin:$PATH
 
       - name: Buildozer build app
-        run: yes | buildozer android debug
+        # run: yes | buildozer android debug
+        run: buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
