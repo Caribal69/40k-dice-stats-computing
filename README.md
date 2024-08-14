@@ -81,7 +81,7 @@ NB: To recreate your tox env, just rm the `.tox` dir and re-run command `tox`.
     * [dice](src/dice.py): All useful functions permitting to compute stats on dice launch
     * [workflow](src/workflow.py): Simulate an attack: (1) touch and (2) wounds, then, compute saves, and eventually feel no pain
     * [utils](src/utils.py): set default configuration (essentially for tests and debug), e.g. critical hit on `6`...
-* File [.github/workflows/buildozer.yml](.github/workflows/buildozer.yml): contains commands to build the app on github 
+* File [.github/workflows/build.yml](.github/workflows/buildozer.yml): contains commands to build the app on github 
 plateform (launched when new code is push). See github documentation [here](https://github.com/ArtemSBulgakov/buildozer-action)
 * File [buildozer.spec](buildozer.spec): File containing command to launch on github servers when code is push
 (see details [here](https://github.com/ArtemSBulgakov/buildozer-action/tree/master)

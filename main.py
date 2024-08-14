@@ -420,7 +420,7 @@ class Main(MDApp):
             average_hp_lost = compute_average_hp_lost(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
 
 
-            print(f"Average dead on {current_carac["Name"]}: {average_ennemy_dead}")
+            print(f"Average dead on {current_carac['Name']}: {average_ennemy_dead}")
 
             # Fill result
             self.pandas_table.loc[
