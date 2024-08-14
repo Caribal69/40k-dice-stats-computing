@@ -39,6 +39,13 @@ jobs:
           pip install --user --upgrade buildozer
           echo 'export PATH=$PATH:~/.local/bin/' >> ~/.bashrc
 
+      # Set up Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Handle Java path
         run: |
           export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
