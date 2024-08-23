@@ -44,12 +44,17 @@ class Main(MDApp):
     ERROR_VALUE = -1000
 
     # Width of the checkboxes
-    CHECKBOX_TEXT_W = 150
+    CHECKBOX_TEXT_W = Window.width / 8
 
     MINIMAL_HEIGHT = dp(10)
 
     # Set to True if you want to print info during the computation
     LAUNCH_WORKFLOW_VERBOSE = False
+
+    # Set to True if you want to test app on a screen of 6.4'' (representative of a smartphone)
+    TEST = True
+    if TEST:
+        Window.size = (640, 1024)  # Set the window size to match the simulated screen
 
     def build(self):
         """
@@ -62,15 +67,18 @@ class Main(MDApp):
         self.theme_cls.primary_palette = "Orange"
 
         # Main screen
-        self.screen = ScrollView(size_hint=(1, None),  # scroll only for y
+        self.screen = ScrollView(
+                                size_hint = (1, 1), # full size screen
+                                # size_hint=(1, None),  # scroll only for y
                                  size=(Window.width, Window.height),
                                  )
 
         # Grids permits to get thinks one by one
         self.grid = MDBoxLayout(orientation="vertical",
-                                padding=dp(20),
-                                spacing=self.MINIMAL_HEIGHT,  # spacing (top-bottom) between each elements of the grid
+                                padding=dp(20),  # Set left padding to 0 to avoid black space
+                                spacing=dp(10),  # Adjust space between each child component
                                 adaptive_height=True,
+                                size_hint_y=None,  # Box exceed Window heigh > permits the scroll
                                 )
 
         # Make sure the height is such that there is something to scroll.
@@ -80,10 +88,10 @@ class Main(MDApp):
 
         # Main title
         self.grid.add_widget(MDLabel(text='40k Dice stats',
-                                     font_style="H2",
+                                     font_style="H4",
                                      halign="center",
                                      size_hint_y=None,
-                                     height=40,
+                                     height=dp(20),  # top padding avoiding reduce text
                                      ))
         # Description
         self.grid.add_widget(MDLabel(text='This little app permits you to compute stats on typical enemy. \n'
@@ -96,10 +104,10 @@ class Main(MDApp):
                                          text=str(10),
                                          hint_text='Nb figurines',
                                          size_hint_x=None,
-                                         width=300,
+                                         width=Window.width/3,
                                          icon_right="account-multiple",
                                          size_hint_y=None,
-                                         height=40,
+                                         height=dp(20),
                                          required=True,
                                          on_release=lambda x: self.compute()
                                          )
@@ -109,14 +117,13 @@ class Main(MDApp):
         # Weapon characteristics
         # ------------------------------------------
         g1 = MDGridLayout(rows=1,
-                          padding=dp(20),  # Left padding
-                          size_hint_y=None, )
+                          size_hint_y=None)
         # Nb attack
         self.field_a = MDTextField(id='A',
                                    text=str(1),
                                    hint_text='A',
                                    size_hint_x=None,
-                                   width=100,
+                                   width=Window.width/7,
                                    icon_right="ammunition",
                                    required=True,
                                    on_text_validate=lambda x: self.compute()
@@ -128,7 +135,7 @@ class Main(MDApp):
                                     text="3+",
                                     hint_text='CT',
                                     size_hint_x=None,
-                                    width=100,
+                                    width=Window.width/7,
                                     icon_right="adjust",
                                     required=True,
                                     on_release=lambda x: self.compute()
@@ -140,7 +147,7 @@ class Main(MDApp):
                                    hint_text='S',
                                    text=str(4),
                                    size_hint_x=None,
-                                   width=100,
+                                   width=Window.width/7,
                                    icon_right="arm-flex",
                                    required=True,
                                    on_release=lambda x: self.compute()
@@ -152,7 +159,7 @@ class Main(MDApp):
                                     hint_text='AP',
                                     text=str(-1),
                                     size_hint_x=None,
-                                    width=100,
+                                    width=Window.width/7,
                                     icon_right="shield-alert",
                                     required=True,
                                     on_release=lambda x: self.compute()
@@ -164,7 +171,7 @@ class Main(MDApp):
                                      text=str(1),
                                      hint_text='D',
                                      size_hint_x=None,
-                                     width=100,
+                                     width=Window.width/7,
                                      icon_right="decagram",
                                      required=True,
                                      on_release=lambda x: self.compute()
@@ -176,7 +183,7 @@ class Main(MDApp):
                                        text=str(6),
                                        hint_text='crit',
                                        size_hint_x=None,
-                                       width=100,
+                                       width=Window.width/7,
                                        icon_right="creation",
                                        required=True,
                                        on_release=lambda x: self.compute()
@@ -193,14 +200,14 @@ class Main(MDApp):
                                      font_style="H5",
                                      halign="center",
                                      size_hint_y=None,
-                                     height=40,
+                                     height=dp(30),
                                      ))
         # TODO: sous forme de menu déroulant:
         self.sustain_hit = MDTextField(id='sh',
                                        text=str(0),
                                        hint_text='Sustain (ex "D3+1")',
                                        size_hint_x=None,
-                                       width=100,
+                                       width=Window.width/3,
                                        required=True,
                                        on_text_validate=lambda x: self.compute()
                                        )
@@ -210,9 +217,8 @@ class Main(MDApp):
         # Checkobxes (options)
         # ------------------------------------------
         g2 = MDGridLayout(cols=6,
-                          padding=dp(20),  # Left padding
                           size_hint_y=None,
-                          # spacing=dp(20)
+                          spacing = dp(20)  # force vertical spacing between each elements
                           )
 
         self.grid.add_widget(g2)
@@ -226,7 +232,7 @@ class Main(MDApp):
         # Re-roll the 1 at the hit dice
         self.rr_hit_ones = MDCheckbox(id="rr_hit_ones",
                                       size_hint_x=None,
-                                      width=50,
+                                      width=Window.width/12,
                                       on_release=lambda x: self._check_checkbox_rr_hit_ones_and_compute()
                                       )
 
@@ -237,7 +243,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll wound 1'))
         self.rr_wounds_one = MDCheckbox(id="rr_wounds_one",
                                         size_hint_x=None,
-                                        width=50,
+                                        width=Window.width/12,
                                         on_release=lambda x: self._check_checkbox_rr_one_wound_and_compute()
                                         )
         g2.add_widget(self.rr_wounds_one)
@@ -247,7 +253,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Lethal hit'))
         self.field_lethal_hit = MDCheckbox(id="lethal_hit",
                                            size_hint_x=None,
-                                           width=50,
+                                           width=Window.width/12,
                                            on_release=lambda x: self.compute()
                                            )
         g2.add_widget(self.field_lethal_hit)
@@ -259,7 +265,7 @@ class Main(MDApp):
         # Re-roll the 1 at the hit dice
         self.rr_hit_all = MDCheckbox(id="rr_hit_all",
                                      size_hint_x=None,
-                                     width=50,
+                                     width=Window.width/12,
                                      on_release=lambda x: self._check_checkbox_rr_hit_all_and_compute()
                                      )
 
@@ -270,7 +276,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Twin'))
         self.rr_wound_all = MDCheckbox(id="rr_wound_all",
                                        size_hint_x=None,
-                                       width=50,
+                                       width=Window.width/12,
                                        on_release=lambda x: self._check_checkbox_rr_all_wound_and_compute()
                                        )
         g2.add_widget(self.rr_wound_all)
@@ -280,7 +286,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Torrent'))
         self.field_torrent = MDCheckbox(id="torrent",
                                         size_hint_x=None,
-                                        width=50,
+                                        width=Window.width/12,
                                         on_release=lambda x: self.compute()
                                         )
         g2.add_widget(self.field_torrent)
@@ -290,7 +296,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Deva. wounds'))
         self.field_deva_wound = MDCheckbox(id="deva_wound",
                                            size_hint_x=None,
-                                           width=50,
+                                           width=Window.width/12,
                                            on_release=lambda x: self.compute()
                                            )
         g2.add_widget(self.field_deva_wound)
@@ -466,15 +472,16 @@ class Main(MDApp):
         column_data = list(result_dict.keys())
         # ['Name', 'average dead enemy', 'average HP lost']
 
-        column_data = [(x, dp(40)) for x in column_data]
+        column_data = [(x, dp(20)) for x in column_data]
 
         widget_table = MDDataTable(
             column_data=column_data,
             row_data=self.__table_to_tuples(result_dict),  # ex of line: ("marine", 0, 0)
             use_pagination=False,
-            height=dp(65 * len(self.enemy_names)),  # 65 * nb lines
+            height=dp(65) * (Window.height/10) * len(self.enemy_names),  # dp(15) correspond to ~ height of a letter
             size_hint_y=None,
             rows_num=len(self.enemy_names),  # 1 line per enemy
+            padding=dp(20),  # left padding
         )
 
         return widget_table

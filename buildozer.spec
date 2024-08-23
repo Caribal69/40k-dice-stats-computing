@@ -13,6 +13,8 @@ requirements = python3,kivy,kivymd
 
 # (str) python-for-android branch to use, defaults to master
 p4a.branch = master
+# reduce the size of compiled shared libraries
+android.p4a_options = --strip
 
 # (list) List of inclusions using pattern matching
 source.include_patterns = src/*
