@@ -10,9 +10,13 @@ cd ../..
 
 # 2/ Commit message
 # --------------------------
-# Get the last commit message (git log -1...) and increment last digit by 1 (awk ... +1)
-NEW_COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s" | awk '/fix buildozer spec/ {print "fix buildozer spec", $NF+1}')
+# Last commit containing char "fix buildozer spec"
+LAST_AUTO_COMMIT=$(git log -10 --pretty=format:"%s" | grep "fix buildozer spec" | tail -n 1)
 # ex: "fix buildozer spec 9"
+
+# Get the last commit message and increment last digit by 1 (awk ... +1)
+NEW_COMMIT_MESSAGE=$(echo $LAST_AUTO_COMMIT | awk '/fix buildozer spec/ {print "fix buildozer spec", $NF+1}')
+# ex: "fix buildozer spec 10"
 
 # 3/ Commit and push
 # --------------------------

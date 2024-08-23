@@ -56,6 +56,9 @@ class Main(MDApp):
     if TEST:
         Window.size = (640, 1024)  # Set the window size to match the simulated screen
 
+    # Width of one column of the table
+    TABLE_COL_W = Window.width / 20
+
     def build(self):
         """
         Main function permitting to build kivy interface.
@@ -76,7 +79,7 @@ class Main(MDApp):
         # Grids permits to get thinks one by one
         self.grid = MDBoxLayout(orientation="vertical",
                                 padding=dp(20),  # Set left padding to 0 to avoid black space
-                                spacing=dp(10),  # Adjust space between each child component
+                                spacing=Window.width/60,  # Adjust space between each child component
                                 adaptive_height=True,
                                 size_hint_y=None,  # Box exceed Window heigh > permits the scroll
                                 )
@@ -325,7 +328,15 @@ class Main(MDApp):
 
         self.widget_table = self.init_data_table(result_dict=self.result_dict)
 
-        self.grid.add_widget(self.widget_table)
+        # Create a BoxLayout with left and right padding
+        layout = MDBoxLayout(size_hint_y=None,
+                             adaptive_height=True,
+                             padding=(self.TABLE_COL_W, Window.width/12, self.TABLE_COL_W, 0),  # (left, top, right, bottom)
+                             )
+
+        self.grid.add_widget(layout)
+
+        layout.add_widget(self.widget_table)
 
         # Compute the first time
         self.compute()
@@ -472,16 +483,15 @@ class Main(MDApp):
         column_data = list(result_dict.keys())
         # ['Name', 'average dead enemy', 'average HP lost']
 
-        column_data = [(x, dp(20)) for x in column_data]
+        column_data = [(x, self.TABLE_COL_W ) for x in column_data]
 
         widget_table = MDDataTable(
             column_data=column_data,
             row_data=self.__table_to_tuples(result_dict),  # ex of line: ("marine", 0, 0)
             use_pagination=False,
-            height=dp(65) * (Window.height/10) * len(self.enemy_names),  # dp(15) correspond to ~ height of a letter
+            height= dp(65) * (Window.height / 10) * len(self.enemy_names),
             size_hint_y=None,
             rows_num=len(self.enemy_names),  # 1 line per enemy
-            padding=dp(20),  # left padding
         )
 
         return widget_table
