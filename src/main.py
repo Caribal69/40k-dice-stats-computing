@@ -46,8 +46,6 @@ class Main(MDApp):
     # Width of the checkboxes
     CHECKBOX_TEXT_W = Window.width / 8
 
-    MINIMAL_HEIGHT = dp(10)
-
     # Set to True if you want to print info during the computation
     LAUNCH_WORKFLOW_VERBOSE = False
 
@@ -58,6 +56,9 @@ class Main(MDApp):
 
     # Width of one column of the table
     TABLE_COL_W = Window.width / 20
+
+    # Spacing between each widget
+    SPACING = Window.height / 20
 
     def build(self):
         """
@@ -79,7 +80,7 @@ class Main(MDApp):
         # Grids permits to get thinks one by one
         self.grid = MDBoxLayout(orientation="vertical",
                                 padding=dp(20),  # Set left padding to 0 to avoid black space
-                                spacing=Window.width/60,  # Adjust space between each child component
+                                spacing=self.SPACING,  # Adjust space between each child component
                                 adaptive_height=True,
                                 size_hint_y=None,  # Box exceed Window heigh > permits the scroll
                                 )
@@ -110,7 +111,7 @@ class Main(MDApp):
                                          width=Window.width/3,
                                          icon_right="account-multiple",
                                          size_hint_y=None,
-                                         height=dp(20),
+                                         # height=dp(20),
                                          required=True,
                                          on_release=lambda x: self.compute()
                                          )
@@ -203,7 +204,7 @@ class Main(MDApp):
                                      font_style="H5",
                                      halign="center",
                                      size_hint_y=None,
-                                     height=dp(30),
+                                     # height=dp(30),
                                      ))
         # TODO: sous forme de menu déroulant:
         self.sustain_hit = MDTextField(id='sh',
@@ -221,7 +222,8 @@ class Main(MDApp):
         # ------------------------------------------
         g2 = MDGridLayout(cols=6,
                           size_hint_y=None,
-                          spacing = dp(20)  # force vertical spacing between each elements
+                          spacing=self.SPACING,  # force vertical spacing between each elements
+                          height=3 * Window.height / 10  # pre-define height to avoid overlap
                           )
 
         self.grid.add_widget(g2)
@@ -230,6 +232,7 @@ class Main(MDApp):
         # ------------------------------------------
         g2.add_widget(MDLabel(size_hint_x=None,
                               width=self.CHECKBOX_TEXT_W,
+
                               text='Re-roll hit 1'))
 
         # Re-roll the 1 at the hit dice
@@ -331,7 +334,8 @@ class Main(MDApp):
         # Create a BoxLayout with left and right padding
         layout = MDBoxLayout(size_hint_y=None,
                              adaptive_height=True,
-                             padding=(self.TABLE_COL_W, Window.width/12, self.TABLE_COL_W, 0),  # (left, top, right, bottom)
+                             # padding=(self.TABLE_COL_W, Window.width/12, self.TABLE_COL_W, 0),  # (left, top, right, bottom)
+                             padding=(Window.width / 15, Window.height / 24, Window.width / 15, 0),
                              )
 
         self.grid.add_widget(layout)
