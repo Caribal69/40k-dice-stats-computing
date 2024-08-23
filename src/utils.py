@@ -4,7 +4,6 @@ Here are the usefull data to launch the workflow.
 By default, the script test_workflow.py works if the params in this utils.py are all set to False.
 """
 from os.path import dirname, abspath, join
-import pandas as pd
 
 # ENV PATH
 SRC_PATH = dirname(abspath(__file__))
@@ -79,10 +78,10 @@ ennemy_hp = 3
 OPPONENT_DATA_PATH = join(ROOT_PATH, "data", "enemy.csv")
 
 # Get access to the opponent list
-opponent_datasheets = pd.read_csv(OPPONENT_DATA_PATH, sep=";")
+# opponent_datasheets = pd.read_csv(OPPONENT_DATA_PATH, sep=";")
 
 # Fill the cells not filled by user (e.g. feel no pain): filled with 7 (e.g. no feel no pain)
-opponent_datasheets = opponent_datasheets.fillna(7)
+# opponent_datasheets = opponent_datasheets.fillna(7)
 # Example:
 #                     Name  svg  svg invul  feel no pain  toughness   w
 # 0                 marine    3        7           7          4   2

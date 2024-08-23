@@ -39,6 +39,8 @@ Just launch `main.py`, on a terminal `python main.py`
 ### How to add more profiles (datasheet) ?
 
 Update file [data/enemy.csv](data/enemy.csv).
+"Compile" file: `python src/build_enemy.py`. This script permits to create a .py file containing content of CSV -> avoid
+using heavy python library to manage the CSV (pandas, ...). A priori, it is optimal way to do.
 
 ### Useful links
 
@@ -81,6 +83,8 @@ NB: To recreate your tox env, just rm the `.tox` dir and re-run command `tox`.
     * [dice](src/dice.py): All useful functions permitting to compute stats on dice launch
     * [workflow](src/workflow.py): Simulate an attack: (1) touch and (2) wounds, then, compute saves, and eventually feel no pain
     * [utils](src/utils.py): set default configuration (essentially for tests and debug), e.g. critical hit on `6`...
+    * [build_enemy](src/build_enemy.py): A script to transform `data/enemy.csv` into `src/enemy.py`
+    * [enemy](src/enemy.py): A script containing the `enemy.csv` data defined as python dict. Permits to avoid using heavy library (pandas, csv...) and lighten the kivy dependencies.
 * File [.github/workflows/build.yml](.github/workflows/buildozer.yml): contains commands to build the app on github 
 plateform (launched when new code is push). See github documentation [here](https://github.com/ArtemSBulgakov/buildozer-action)
 * File [buildozer.spec](buildozer.spec): File containing command to launch on github servers when code is push

@@ -69,19 +69,19 @@ jobs:
           path: bin/*.apk
           # path: ${{ steps.buildozer.outputs.filename }}
 
-      # Push result into branch "data" (in dir "bin/")
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Move to branch data
-        run: git checkout data
-
-      - name: Commit and Push Artifact to branch "data"
-        run: |
-          git add *apk
-          git commit -m "Add artifact to bin directory"
-          git push origin data
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      # Push result into branch "data" (in dir "bin/")
+#      - name: Configure Git
+#        run: |
+#          git config user.name "github-actions[bot]"
+#          git config user.email "github-actions[bot]@users.noreply.github.com"
+#
+#      - name: Move to branch data
+#        run: git checkout data
+#
+#      - name: Commit and Push Artifact to branch "data"
+#        run: |
+#          git add *apk
+#          git commit -m "Add artifact to bin directory"
+#          git push origin data
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

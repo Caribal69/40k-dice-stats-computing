@@ -2,8 +2,10 @@
 App launcher.
 
 This script contains the main interface of the app.
+
+Note that for performances issues, we are not yet using pandas to manipulate tables (`opponent_datasheet`).
+It raise a more complex code but optimal.
 """
-import pandas as pd
 from kivy.core.window import Window
 from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
@@ -18,26 +20,21 @@ from kivymd.uix.selectioncontrol.selectioncontrol import MDCheckbox
 from kivymd.uix.textfield import MDTextField
 from time import time
 
-import os
-import sys
+from os.path import dirname, abspath
+from sys import path
 
 # Get the directory of the current file
-current_dir = os.path.dirname(os.path.abspath(__file__))
+current_dir = dirname(abspath(__file__))
 
 # Get the parent directory
-parent_dir = os.path.dirname(current_dir)
+parent_dir = dirname(current_dir)
 
 # Add the parent directory to the Python path
-sys.path.insert(0, parent_dir)
+path.insert(0, parent_dir)
 
-
-
-from src.utils import opponent_datasheets
+from src.enemy import opponent_datasheets
 from src.workflow import launch_workflow
 from src.dice import compute_average_enemy_dead, compute_average_hp_lost
-
-
-
 
 class Main(MDApp):
 
@@ -113,7 +110,6 @@ class Main(MDApp):
         g1 = MDGridLayout(rows=1,
                           padding=dp(20),  # Left padding
                           size_hint_y=None, )
-
         # Nb attack
         self.field_a = MDTextField(id='A',
                                    text=str(1),
@@ -205,7 +201,7 @@ class Main(MDApp):
                                        size_hint_x=None,
                                        width=100,
                                        required=True,
-                                       on_release=lambda x: self.compute()
+                                       on_text_validate=lambda x: self.compute()
                                        )
         self.grid.add_widget(self.sustain_hit)
 
@@ -298,6 +294,7 @@ class Main(MDApp):
                                            )
         g2.add_widget(self.field_deva_wound)
 
+
         # ------------------------------------------
         # Submit button
         # ------------------------------------------
@@ -311,14 +308,17 @@ class Main(MDApp):
         # ------------------------------------------
         # Results
         # ------------------------------------------
+        self.enemy_names = list(opponent_datasheets.keys())
+        # ["marine", "sororita", ...]
+
         # Init result df full of 0
-        self.pandas_table = pd.DataFrame({"Name": opponent_datasheets["Name"],
-                                          "average dead enemy": 0. * len(opponent_datasheets),
-                                          "average HP lost": 0. * len(opponent_datasheets)})
+        self.result_dict = {"Name": self.enemy_names,
+                            "average dead enemy": [0.] * len(self.enemy_names),  # [0, 0, ...]
+                            "average HP lost": [0.] * len(self.enemy_names)}  # [0, 0, ...]
 
-        self.table = self.get_data_table(self.pandas_table)
+        self.widget_table = self.init_data_table(result_dict=self.result_dict)
 
-        self.grid.add_widget(self.table)
+        self.grid.add_widget(self.widget_table)
 
         # Compute the first time
         self.compute()
@@ -343,7 +343,7 @@ class Main(MDApp):
 
     def compute(self):
         """
-        Compute dice proba on all `opponent_datasheet`. Update `self.table`
+        Compute dice proba on all `opponent_datasheet`. Update `self.result_dict`
         """
         start_process = time()
 
@@ -381,18 +381,15 @@ class Main(MDApp):
 
         # 2/ Compute
         # ------------------------------------------
-        for name in opponent_datasheets["Name"]:
-            # select one row
-            current_carac = opponent_datasheets[opponent_datasheets["Name"] == name].iloc[0]
-            # ex:
-            # Name            marine
-            # svg                  3
-            # svg invul          7.0
-            # feel no pain       7.0
-            # toughness            4
-            # w                    2
+        enemy_names = list(opponent_datasheets.keys())
+        # ["marine", "sororita", ...]
 
-            # Compute the effect of the weapon on the current ennemy
+        for index, name in enumerate(enemy_names):
+            # select one row
+            current_carac = opponent_datasheets[name]
+            # ex: {'svg': 3, 'svg invul': None, 'feel no pain': None, 'toughness': 4, 'w': 2}
+
+            # Compute the effect of the weapon on the current enemy
             ennemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
                                                         crit=crit,
                                                         weapon_a=weapon_a,
@@ -419,17 +416,14 @@ class Main(MDApp):
             average_ennemy_dead = compute_average_enemy_dead(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
             average_hp_lost = compute_average_hp_lost(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
 
+            print(f"Average dead on {name}: {average_ennemy_dead}")
 
-            print(f"Average dead on {current_carac['Name']}: {average_ennemy_dead}")
+            # Fill `result_dict`
+            # ------------------------------------------
+            self.result_dict['average dead enemy'][index] = average_ennemy_dead
+            self.result_dict['average HP lost'][index] = average_hp_lost
 
-            # Fill result
-            self.pandas_table.loc[
-                self.pandas_table["Name"] == current_carac["Name"], "average dead enemy"] = average_ennemy_dead
-
-            self.pandas_table.loc[
-                self.pandas_table["Name"] == current_carac["Name"], "average HP lost"] = average_hp_lost
-
-        self.update_data_table(self.pandas_table)
+        self.update_widget_table(self.result_dict)
 
         print(f"Time to compute: {time() - start_process}s.")
 
@@ -449,34 +443,47 @@ class Main(MDApp):
         except:
             return self.ERROR_VALUE
 
+    # Manage table
+    # ------------------------------------------------
     @staticmethod
-    def get_data_table(dataframe: pd.DataFrame) -> MDDataTable:
+    def __table_to_tuples(table: dict) -> list:
         """
-        Parse pandas `dataFrame` and return kivy `MDDataTable`
+        Transform `result_dict` (nested dict) into list of tuples
+        Example:
+        input: {'Name': ['marine', 'sororita',...], 'average dead enemy': [0.0, 0.0,..], 'average HP lost': [0.0, 0.0..]
+        output: [('marine', 0.0, 0.0),  ('sororita', 0.0, 0.0),...]
         """
-        column_data = list(dataframe.columns)
-        row_data = dataframe.to_records(index=False)
+        return [(table["Name"][k],
+                 table['average dead enemy'][k],
+                 table["average HP lost"][k])
+                for k in range(len(table["Name"]))]
+
+    def init_data_table(self, result_dict: dict) -> MDDataTable:
+        """
+        Init a data result_dict with 0
+        """
+        column_data = list(result_dict.keys())
+        # ['Name', 'average dead enemy', 'average HP lost']
 
         column_data = [(x, dp(40)) for x in column_data]
 
-        table = MDDataTable(
+        widget_table = MDDataTable(
             column_data=column_data,
-            row_data=row_data,
+            row_data=self.__table_to_tuples(result_dict),  # ex of line: ("marine", 0, 0)
             use_pagination=False,
-            height=dp(65 * len(dataframe)),
+            height=dp(65 * len(self.enemy_names)),  # 65 * nb lines
             size_hint_y=None,
-            rows_num=len(dataframe),
+            rows_num=len(self.enemy_names),  # 1 line per enemy
         )
-        return table
 
-    def update_data_table(self, dataframe: pd.DataFrame) -> None:
+        return widget_table
+
+    def update_widget_table(self, updated_dict: dict) -> None:
         """
-        Update `table.row_data` with `dataframe`content.
+        Update `widget_table.row_data` with `updated_dict`content.
         """
         # Into correct format (list of tuples)
-        df_formated = dataframe.to_records(index=False).tolist()
-
-        self.table.row_data = df_formated
+        self.widget_table.row_data = self.__table_to_tuples(updated_dict)
 
     # All checks > unselect incompatible checkbox when selecting new one
     # ------------------------------------------------

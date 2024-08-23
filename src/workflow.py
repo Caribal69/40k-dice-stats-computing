@@ -10,8 +10,6 @@ the opponent will be hit & wound AT MINIMUM at 5+.
 """
 from typing import Union, Tuple
 
-import numpy as np
-
 from src.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
     get_wound_threshold, parse_expression, proba_crit
 from src.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
@@ -74,6 +72,14 @@ def launch_workflow(nb_figs: int = nb_figs,
     # ------------------------------------------------------------------------------
     # 0/ Init
     # ------------------------------------------------------------------------------
+    # Checker
+    # ---------------------
+    if fnp_enemy is None:
+        fnp_enemy = 7
+    if svg_enemy is None:
+        svg_enemy = 7
+    if svg_invul_enemy is None:
+        svg_invul_enemy = 7
 
     # 0.1/ Check incompatible bonuses
     # ------------------------------------------------------------------------------
@@ -239,7 +245,6 @@ def launch_workflow(nb_figs: int = nb_figs,
                 remaining_hp = ennemy_hp
             else:  # damage won't kill the unit
                 remaining_hp -= damage
-            # if verbose: print(f"{i}: Nb dead (average): {np.mean(ennemy_dead)}, 1 ennemy remains with {remaining_hp} HP")
 
     # Apply damages on `remaining_failed_saves` (float)
     # -------------------------------------
@@ -251,7 +256,9 @@ def launch_workflow(nb_figs: int = nb_figs,
         remaining_hp = 0
         ennemy_dead += 1
 
-    if verbose: print(f"Nb dead (average): {np.mean(ennemy_dead)}, 1 ennemy remains with {remaining_hp}/{ennemy_hp} HP")
+    if verbose:
+        from statistics import mean
+        print(f"Nb dead (average): {mean(ennemy_dead)}, 1 ennemy remains with {remaining_hp}/{ennemy_hp} HP")
 
     return ennemy_dead, remaining_hp
 

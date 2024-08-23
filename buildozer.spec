@@ -9,7 +9,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,csv
 
 version = 0.1
-requirements = python3,kivy,kivymd,numpy,pandas
+requirements = python3,kivy,kivymd
 
 # (str) python-for-android branch to use, defaults to master
 p4a.branch = master
