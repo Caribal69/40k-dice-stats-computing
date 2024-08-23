@@ -7,9 +7,9 @@ from os.path import dirname, abspath, join
 
 # ENV PATH
 SRC_PATH = dirname(abspath(__file__))
-# <absolute_path>/android/src/
+# <absolute_path>/40k-dice-stats-computing/src/
 ROOT_PATH = dirname(SRC_PATH)
-# <absolute_path>/android/
+# <absolute_path>/40k-dice-stats-computing/
 
 nb_figs=10
 # If True, print lots of things (default False). Set to True for debug.

@@ -10,9 +10,9 @@ the opponent will be hit & wound AT MINIMUM at 5+.
 """
 from typing import Union, Tuple
 
-from src.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
+from common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
     get_wound_threshold, parse_expression, proba_crit
-from src.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
+from common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
                        rr_hit_ones, rr_hit_all, sustain_hit, lethal_hit, rr_wounds_ones, twin, devastating_wounds,
                        enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, ennemy_hp, VERBOSE)
 

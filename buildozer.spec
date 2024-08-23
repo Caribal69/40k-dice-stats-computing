@@ -5,8 +5,8 @@ package.name = testapp
 package.domain = org.test.appname
 
 # (list) Source files to include (let's include everything in the src directory)
-source.dir = .
-source.include_exts = py,png,jpg,kv,atlas,csv
+source.dir = src
+source.include_exts = py
 
 version = 0.1
 requirements = python3,kivy,kivymd
@@ -15,7 +15,7 @@ requirements = python3,kivy,kivymd
 p4a.branch = master
 
 # (list) List of inclusions using pattern matching
-source.include_patterns = src/*, data/*
+source.include_patterns = src/*
 
 orientation = portrait
 fullscreen = 0
@@ -35,19 +35,6 @@ fullscreen = 0
 #android.ndk = 23b
 
 # ---------
-
-
-
-
-
-
-
-
-
-
-
-
-
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 android.arch = armeabi-v7a
 

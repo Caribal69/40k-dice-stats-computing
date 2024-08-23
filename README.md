@@ -34,7 +34,13 @@ an unit / weapon on a glimpse. Here are the typical enemy considered (their stat
 
 ### How to start
 
-Just launch `main.py`, on a terminal `python main.py`
+You may need to install python and dependencies (see [How to install (developers)](#How-to-install-developers))
+
+Just launch `src/main.py`, on a terminal:
+```
+cd src
+python main.py
+```
 
 ### How to add more profiles (datasheet) ?
 
@@ -73,18 +79,20 @@ NB: To recreate your tox env, just rm the `.tox` dir and re-run command `tox`.
 
 ### Architecture of dirs
 
-* [main.py](main.py): The main script, permitting to launch an app (via `kivy` python library)
+
 * [requirements.txt](requirements.txt): all python library to install. Do not pay attention to this script, `tox` will automatically handle it
 * [tox.ini](tox.ini): A simple configuration file containing all useful info (libs, python version, ...) when launching command `tox`
 * dir [test](test/): contains all test scripts. Permits to test non regression of the evolution of the code.
 * dir [data](data/): contains a dataset of typical enemy. 
   * [enemy.csv](data/enemy.csv): contains the stats of typical enemy
 * dir `src/` contains all source code
-    * [dice](src/dice.py): All useful functions permitting to compute stats on dice launch
-    * [workflow](src/workflow.py): Simulate an attack: (1) touch and (2) wounds, then, compute saves, and eventually feel no pain
-    * [utils](src/utils.py): set default configuration (essentially for tests and debug), e.g. critical hit on `6`...
-    * [build_enemy](src/build_enemy.py): A script to transform `data/enemy.csv` into `src/enemy.py`
-    * [enemy](src/enemy.py): A script containing the `enemy.csv` data defined as python dict. Permits to avoid using heavy library (pandas, csv...) and lighten the kivy dependencies.
+    * [main.py](src/main.py): The main script, permitting to launch an app (via `kivy` python library)
+    * sub dir `common` with all useful scripts:
+      * [dice](src/common/dice.py): All useful functions permitting to compute stats on dice launch
+      * [workflow](src/common/workflow.py): Simulate an attack: (1) touch and (2) wounds, then, compute saves, and eventually feel no pain
+      * [utils](src/common/utils.py): set default configuration (essentially for tests and debug), e.g. critical hit on `6`...
+      * [build_enemy](src/common/build_enemy.py): A script to transform `data/enemy.csv` into `src/enemy.py`
+      * [enemy](src/common/enemy.py): A script containing the `enemy.csv` data defined as python dict. Permits to avoid using heavy library (pandas, csv...) and lighten the kivy dependencies.
 * File [.github/workflows/build.yml](.github/workflows/buildozer.yml): contains commands to build the app on github 
 plateform (launched when new code is push). See github documentation [here](https://github.com/ArtemSBulgakov/buildozer-action)
 * File [buildozer.spec](buildozer.spec): File containing command to launch on github servers when code is push

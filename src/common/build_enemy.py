@@ -16,11 +16,12 @@ from os.path import dirname, abspath, join
 # ------------------------------------------------------
 # ENV PATH
 SRC_PATH = dirname(abspath(__file__))
-# <absolute_path>/android/src/
-ROOT_PATH = dirname(SRC_PATH)
-# <absolute_path>/android/
+# <absolute_path>/40k-dice-stats-computing/src/common/
+ROOT_PATH = dirname(dirname(SRC_PATH))
+# <absolute_path>/40k-dice-stats-computing/
+
 # Path where file is read
-output_file_path = "enemy.py"
+output_file_path = join(SRC_PATH, "enemy.py")
 # Path to the CSV to read
 OPPONENT_DATA_PATH = join(ROOT_PATH, "data", "enemy.csv")
 

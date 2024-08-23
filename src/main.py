@@ -19,22 +19,23 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.selectioncontrol.selectioncontrol import MDCheckbox
 from kivymd.uix.textfield import MDTextField
 from time import time
-
 from os.path import dirname, abspath
 from sys import path
 
 # Get the directory of the current file
 current_dir = dirname(abspath(__file__))
+# <absolute_path>/40k-dice-stats-computing/src/
 
 # Get the parent directory
-parent_dir = dirname(current_dir)
+# parent_dir = dirname(current_dir)
+# <absolute_path>/40k-dice-stats-computing/
 
 # Add the parent directory to the Python path
-path.insert(0, parent_dir)
+path.insert(0, current_dir)
 
-from src.enemy import opponent_datasheets
-from src.workflow import launch_workflow
-from src.dice import compute_average_enemy_dead, compute_average_hp_lost
+from common.enemy import opponent_datasheets
+from common.workflow import launch_workflow
+from common.dice import compute_average_enemy_dead, compute_average_hp_lost
 
 class Main(MDApp):
 
@@ -524,6 +525,5 @@ class Main(MDApp):
         if self.rr_wound_all.active:
             self.rr_wounds_one.active = False
         self.compute()
-
 
 Main().run()
