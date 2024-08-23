@@ -52,7 +52,7 @@ class Main(MDApp):
     LAUNCH_WORKFLOW_VERBOSE = False
 
     # Set to True if you want to test app on a screen of 6.4'' (representative of a smartphone)
-    TEST = True
+    TEST = False
     if TEST:
         Window.size = (640, 1024)  # Set the window size to match the simulated screen
 
