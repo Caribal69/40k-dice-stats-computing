@@ -35,7 +35,7 @@ path.insert(0, current_dir)
 
 from common.enemy import opponent_datasheets
 from common.workflow import launch_workflow
-from common.dice import compute_average_enemy_dead, compute_average_hp_lost
+from common.dice import compute_average_enemy_dead, compute_average_hp_lost, DiceExpression, _parse_str_expression
 
 class Main(MDApp):
 
@@ -44,7 +44,7 @@ class Main(MDApp):
     ERROR_VALUE = -1000
 
     # Width of the checkboxes
-    CHECKBOX_TEXT_W = Window.width / 8
+    CHECKBOX_TEXT_W = Window.width / 4
 
     # Set to True if you want to print info during the computation
     LAUNCH_WORKFLOW_VERBOSE = False
@@ -120,14 +120,16 @@ class Main(MDApp):
         # ------------------------------------------
         # Weapon characteristics
         # ------------------------------------------
-        g1 = MDGridLayout(rows=1,
-                          size_hint_y=None)
+        g1 = MDGridLayout(rows=2,
+                          size_hint_y=None,
+                          height=2 * Window.height / 10  # pre-define height to avoid overlap
+                        )
         # Nb attack
         self.field_a = MDTextField(id='A',
                                    text=str(1),
                                    hint_text='A',
                                    size_hint_x=None,
-                                   width=Window.width/7,
+                                   width=Window.width/4,
                                    icon_right="ammunition",
                                    required=True,
                                    on_text_validate=lambda x: self.compute()
@@ -139,7 +141,7 @@ class Main(MDApp):
                                     text="3+",
                                     hint_text='CT',
                                     size_hint_x=None,
-                                    width=Window.width/7,
+                                    width=Window.width/4,
                                     icon_right="adjust",
                                     required=True,
                                     on_release=lambda x: self.compute()
@@ -151,7 +153,7 @@ class Main(MDApp):
                                    hint_text='S',
                                    text=str(4),
                                    size_hint_x=None,
-                                   width=Window.width/7,
+                                   width=Window.width/4,
                                    icon_right="arm-flex",
                                    required=True,
                                    on_release=lambda x: self.compute()
@@ -163,7 +165,7 @@ class Main(MDApp):
                                     hint_text='AP',
                                     text=str(-1),
                                     size_hint_x=None,
-                                    width=Window.width/7,
+                                    width=Window.width/4,
                                     icon_right="shield-alert",
                                     required=True,
                                     on_release=lambda x: self.compute()
@@ -175,7 +177,7 @@ class Main(MDApp):
                                      text=str(1),
                                      hint_text='D',
                                      size_hint_x=None,
-                                     width=Window.width/7,
+                                     width=Window.width/4,
                                      icon_right="decagram",
                                      required=True,
                                      on_release=lambda x: self.compute()
@@ -187,7 +189,7 @@ class Main(MDApp):
                                        text=str(6),
                                        hint_text='crit',
                                        size_hint_x=None,
-                                       width=Window.width/7,
+                                       width=Window.width/4,
                                        icon_right="creation",
                                        required=True,
                                        on_release=lambda x: self.compute()
@@ -220,10 +222,10 @@ class Main(MDApp):
         # ------------------------------------------
         # Checkobxes (options)
         # ------------------------------------------
-        g2 = MDGridLayout(cols=6,
+        g2 = MDGridLayout(cols=2,
                           size_hint_y=None,
                           spacing=self.SPACING,  # force vertical spacing between each elements
-                          height=3 * Window.height / 10  # pre-define height to avoid overlap
+                          height=8 * Window.height / 10  # pre-define height to avoid overlap
                           )
 
         self.grid.add_widget(g2)
@@ -238,7 +240,7 @@ class Main(MDApp):
         # Re-roll the 1 at the hit dice
         self.rr_hit_ones = MDCheckbox(id="rr_hit_ones",
                                       size_hint_x=None,
-                                      width=Window.width/12,
+                                      width=Window.width/2,
                                       on_release=lambda x: self._check_checkbox_rr_hit_ones_and_compute()
                                       )
 
@@ -249,7 +251,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll wound 1'))
         self.rr_wounds_one = MDCheckbox(id="rr_wounds_one",
                                         size_hint_x=None,
-                                        width=Window.width/12,
+                                        width=Window.width/2,
                                         on_release=lambda x: self._check_checkbox_rr_one_wound_and_compute()
                                         )
         g2.add_widget(self.rr_wounds_one)
@@ -259,7 +261,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Lethal hit'))
         self.field_lethal_hit = MDCheckbox(id="lethal_hit",
                                            size_hint_x=None,
-                                           width=Window.width/12,
+                                           width=Window.width/2,
                                            on_release=lambda x: self.compute()
                                            )
         g2.add_widget(self.field_lethal_hit)
@@ -271,7 +273,7 @@ class Main(MDApp):
         # Re-roll the 1 at the hit dice
         self.rr_hit_all = MDCheckbox(id="rr_hit_all",
                                      size_hint_x=None,
-                                     width=Window.width/12,
+                                     width=Window.width/2,
                                      on_release=lambda x: self._check_checkbox_rr_hit_all_and_compute()
                                      )
 
@@ -282,7 +284,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Twin'))
         self.rr_wound_all = MDCheckbox(id="rr_wound_all",
                                        size_hint_x=None,
-                                       width=Window.width/12,
+                                       width=Window.width/2,
                                        on_release=lambda x: self._check_checkbox_rr_all_wound_and_compute()
                                        )
         g2.add_widget(self.rr_wound_all)
@@ -292,7 +294,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Torrent'))
         self.field_torrent = MDCheckbox(id="torrent",
                                         size_hint_x=None,
-                                        width=Window.width/12,
+                                        width=Window.width/2,
                                         on_release=lambda x: self.compute()
                                         )
         g2.add_widget(self.field_torrent)
@@ -302,7 +304,7 @@ class Main(MDApp):
         g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Deva. wounds'))
         self.field_deva_wound = MDCheckbox(id="deva_wound",
                                            size_hint_x=None,
-                                           width=Window.width/12,
+                                           width=Window.width/2,
                                            on_release=lambda x: self.compute()
                                            )
         g2.add_widget(self.field_deva_wound)
@@ -347,22 +349,71 @@ class Main(MDApp):
 
         return self.screen
 
-    def check_entry(self):
+    # CHECKER
+    # ----------------------------------------------------------------------------
+    def check_entry_sustain_hit(self):
         """
-        Check content of `field_nb_figs.text`. If not int > open error dialog box.
+        Check content of `self.sustain_hit.text`. If wrong format, open error dialog.
+        Ex of correct format: "2D6+1", "2D6", "2".
         """
-
-        if self.parse_content(self.field_nb_figs.text) != self.ERROR_VALUE:
-            print("OK")
+        if self.parse_str_to_dice_expression(self.sustain_hit.text)!= self.ERROR_VALUE:
+            print("Content 'Sustain hit', value ok")
         else:
             # Error popup
             self.dialog = MDDialog(title='Bad entry',
-                                   text=f'Bad entry ("{self.field_nb_figs.text}"). Expected int !',
+                                   text=f'Bad entry "sustain hit". Expected format "XDY+Z" (ex: 2 or 2D6 or 3D6+4) !',
                                    size_hint=(0.8, 1),
                                    buttons=[MDFlatButton(text='Close', on_release=self.close_dialog)]
                                    )
             self.dialog.open()
 
+    def check_int_entry(self, text_field_widget: MDTextField) -> None:
+        """
+        Check content of `field_text`. If not int > open error dialog box.
+
+        :param text_field_widget: TextField widget to check
+        :param format_expected: Format expected for `test_widget.text` (only used for message). Ex: "2D6+1". Ex: "int"
+        """
+
+        if self.parse_str_to_int(text_field_widget.text) != self.ERROR_VALUE:
+            print(f"Content: '{text_field_widget.hint_text}', value ok")
+        else:
+            # Error popup
+            self.dialog = MDDialog(title='Bad entry',
+                                   text=f'Bad entry ("{text_field_widget.hint_text}"). Expected int !',
+                                   size_hint=(0.8, 1),
+                                   buttons=[MDFlatButton(text='Close', on_release=self.close_dialog)]
+                                   )
+            self.dialog.open()
+
+    def close_dialog(self, obj):
+        """
+        Function to apply when clicking "close" on the dialog box -> close dialog box
+        """
+        self.dialog.dismiss()
+
+    def parse_str_to_int(self, entry: str) -> int:
+        """
+        Parse content of `entry` (str -> int).
+        """
+        try:
+            entry_int = int(entry)
+            return entry_int
+        except:
+            return self.ERROR_VALUE
+
+    def parse_str_to_dice_expression(self, entry: str) -> DiceExpression | int:
+        """
+        Parse content of `entry` (str -> DiceExpression).
+        """
+        try:
+            entry_dice_expression = _parse_str_expression(entry)
+            return entry_dice_expression
+        except:
+            return self.ERROR_VALUE
+
+    # COMPUTE
+    # ----------------------------------------------------------------------------
     def compute(self):
         """
         Compute dice proba on all `opponent_datasheet`. Update `self.result_dict`
@@ -371,7 +422,18 @@ class Main(MDApp):
 
         print("COMPUTE")
         print("-"*200)
-        # self.check_entry()
+
+        # 0/ Check content of fields (if wrong content, app crash)
+        # ------------------------------------------
+        self.check_int_entry(self.field_nb_figs)
+        self.check_int_entry(self.field_a)
+        # DO NOT check CT as int entry, because contains "+" --> from now, not checked
+        self.check_int_entry(self.field_s)
+        self.check_int_entry(self.field_ap)
+        self.check_int_entry(self.field_dmg)
+        self.check_int_entry(self.field_crits)
+
+        self.check_entry_sustain_hit()
 
         # 1/ Retrieve results from user demand
         # ------------------------------------------
@@ -448,22 +510,6 @@ class Main(MDApp):
         self.update_widget_table(self.result_dict)
 
         print(f"Time to compute: {time() - start_process}s.")
-
-    def close_dialog(self, obj):
-        """
-        Function to apply when clicking "close" on the dialog box -> close dialog box
-        """
-        self.dialog.dismiss()
-
-    def parse_content(self, entry: str) -> int:
-        """
-        Parse content of `entry`.
-        """
-        try:
-            entry_int = int(entry)
-            return entry_int
-        except:
-            return self.ERROR_VALUE
 
     # Manage table
     # ------------------------------------------------

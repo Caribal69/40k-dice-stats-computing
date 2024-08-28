@@ -70,22 +70,26 @@ def _parse_str_expression(dice_expression: str) -> DiceExpression:
     function shall be called many times).
     """
     s1 = dice_expression.split("D")
-    # ex: ['2', '6+1']
+    # ex: "2D6+1" -> ['2', '6+1']
 
     if s1[0] == "":  # ex: "D3+1" -> s1 = ""
         nb_dice = 1
     else:
         nb_dice = int(s1[0])  # ex: 2
 
-    s2 = s1[1].split("+") # ex: "6+1"
+    if len(s1) == 1:  # ex: dice_expression="2"
+        return DiceExpression(nb_dice=0, dice_face=6, bonus=nb_dice)
+    elif len(s1) == 2:  # # ex: dice_expression="2D6+1"
+        s2 = s1[1].split("+") # ex: "6+1"
 
-    dice_face = int(s2[0])  # ex: 6
+        dice_face = int(s2[0])  # ex: 6
 
-    bonus = 0
-    if len(s2) == 2:
-        bonus = int(s2[1])  # ex: 1
+        bonus = 0
+        if len(s2) == 2:
+            bonus = int(s2[1])  # ex: 1
 
-    return DiceExpression(nb_dice=nb_dice, dice_face=dice_face, bonus=bonus)
+        return DiceExpression(nb_dice=nb_dice, dice_face=dice_face, bonus=bonus)
+
 
 def _define_average_launch(dice_expression: str) -> float:
     """
