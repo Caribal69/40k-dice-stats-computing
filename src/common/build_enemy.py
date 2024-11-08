@@ -12,29 +12,6 @@ import pandas as pd
 from numpy import nan
 from os.path import dirname, abspath, join
 
-# 0/ PATHS
-# ------------------------------------------------------
-# ENV PATH
-SRC_PATH = dirname(abspath(__file__))
-# <absolute_path>/40k-dice-stats-computing/src/common/
-ROOT_PATH = dirname(dirname(SRC_PATH))
-# <absolute_path>/40k-dice-stats-computing/
-
-# Path where file is read
-output_file_path = join(SRC_PATH, "enemy.py")
-# Path to the CSV to read
-OPPONENT_DATA_PATH = join(ROOT_PATH, "data", "enemy.csv")
-
-# 2/ Open CSV > into dict
-# ------------------------------------------------------
-df = pd.read_csv(OPPONENT_DATA_PATH, sep=";")
-
-# Set the index column
-df.set_index("Name", inplace=True)
-
-# Convert the DataFrame to a nested dictionary
-nested_dict = df.replace([nan], [None], regex=False).to_dict(orient='index')
-
 # 3/ dict into .py file
 # ------------------------------------------------------
 def write_dict_to_py(dictionary: dict, file_path: str, dict_name: str='opponent_datasheets') -> None:
@@ -64,6 +41,29 @@ def write_dict_to_py(dictionary: dict, file_path: str, dict_name: str='opponent_
 
 
 if __name__ == "__main__":
+    # 0/ PATHS
+    # ------------------------------------------------------
+    # ENV PATH
+    SRC_PATH = dirname(abspath(__file__))
+    # <absolute_path>/40k-dice-stats-computing/src/common/
+    ROOT_PATH = dirname(dirname(SRC_PATH))
+    # <absolute_path>/40k-dice-stats-computing/
+
+    # Path where file is read
+    output_file_path = join(SRC_PATH, "enemy.py")
+    # Path to the CSV to read
+    OPPONENT_DATA_PATH = join(ROOT_PATH, "data", "enemy.csv")
+
+    # 2/ Open CSV > into dict
+    # ------------------------------------------------------
+    df = pd.read_csv(OPPONENT_DATA_PATH, sep=";")
+
+    # Set the index column
+    df.set_index("Name", inplace=True)
+
+    # Convert the DataFrame to a nested dictionary
+    nested_dict = df.replace([nan], [None], regex=False).to_dict(orient='index')
+
     # Launch
     write_dict_to_py(nested_dict, output_file_path)
     print(f"Successfuly transformed '{OPPONENT_DATA_PATH}' into '{output_file_path}'")

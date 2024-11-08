@@ -8,11 +8,18 @@ avoid double reroll)
     * A critical hit (resp. wound) is always a hit (resp. wound). For instance, if critical is set to 5+,
 the opponent will be hit & wound AT MINIMUM at 5+.
 """
+import os, sys
 from typing import Union, Tuple
 
-from common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
+# Go into root dir to enable imports
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../../"
+
+# Modify Python path to enable import custom modules in root dir.
+sys.path.append(ROOT_DIR)
+
+from src.common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
     get_wound_threshold, parse_expression, proba_crit
-from common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
+from src.common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
                        rr_hit_ones, rr_hit_all, sustain_hit, lethal_hit, rr_wounds_ones, twin, devastating_wounds,
                        enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, ennemy_hp, VERBOSE)
 

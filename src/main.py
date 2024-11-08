@@ -19,23 +19,23 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.selectioncontrol.selectioncontrol import MDCheckbox
 from kivymd.uix.textfield import MDTextField
 from time import time
-from os.path import dirname, abspath
+from os.path import dirname, abspath, realpath
 from sys import path
 
 # Get the directory of the current file
 current_dir = dirname(abspath(__file__))
-# <absolute_path>/40k-dice-stats-computing/src/
 
 # Get the parent directory
-# parent_dir = dirname(current_dir)
+parent_dir = dirname(current_dir)
 # <absolute_path>/40k-dice-stats-computing/
 
 # Add the parent directory to the Python path
-path.insert(0, current_dir)
+# path.insert(0, current_dir)
+path.insert(0, parent_dir)
 
-from common.enemy import opponent_datasheets
-from common.workflow import launch_workflow
-from common.dice import compute_average_enemy_dead, compute_average_hp_lost, DiceExpression, _parse_str_expression
+from src.common.enemy import opponent_datasheets
+from src.common.workflow import launch_workflow
+from src.common.dice import compute_average_enemy_dead, compute_average_hp_lost, DiceExpression, _parse_str_expression
 
 class Main(MDApp):
 
@@ -328,7 +328,7 @@ class Main(MDApp):
         # ------------------------------------------
         # Submit button
         # ------------------------------------------
-        self.submit_button = MDRectangleFlatButton(text='Submit')
+        self.submit_button = MDRectangleFlatButton(text='Submit', id="submit_button")
         self.submit_button.bind(on_press=lambda x: self.compute())
         self.grid.add_widget(self.submit_button)
 
@@ -358,6 +358,9 @@ class Main(MDApp):
         self.grid.add_widget(layout)
 
         layout.add_widget(self.widget_table)
+
+        # Init var containing Dialog box
+        self.dialog = None
 
         # Compute the first time
         self.compute()
@@ -638,4 +641,5 @@ class Main(MDApp):
             self.rr_wounds_one.active = False
         self.compute()
 
-Main().run()
+if __name__ == "__main__":
+    Main().run()

@@ -14,6 +14,6 @@ ipywidgets
 voila
 tox
 # Working in april 2024
-jupyter==1.0.0
+jupyter>=4.2.5
 jupyterlab==4.1.8
 pretty-html-table
