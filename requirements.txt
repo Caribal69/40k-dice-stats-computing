@@ -15,5 +15,5 @@ voila
 tox
 # Working in april 2024
 jupyter>=4.2.5
-jupyterlab==4.1.8
+jupyterlab>=4.1.8
 pretty-html-table
