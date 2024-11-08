@@ -545,7 +545,7 @@ class Main(MDApp):
                 self.update_widget_table(self.result_dict)
 
                 print(f"Time to compute: {time() - start_process}s.")
-    
+
         except Exception as e:
             # Error popup
             self.dialog = MDDialog(title='Bad entry',
