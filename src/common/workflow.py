@@ -21,7 +21,7 @@ ROOT_PATH = dirname(SRC_PATH)
 
 # Modify Python path to enable import custom modules in root dir.
 sys.path.append(ROOT_PATH)
-
+# Assuming app is already working on src (see `buildozer.spec[source.dir]`) : else app bug
 from common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
     get_wound_threshold, parse_expression, proba_crit
 from common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,

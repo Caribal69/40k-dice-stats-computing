@@ -15,6 +15,8 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
    - [Acronyms](#Acronyms)
 3. [Elements for developers](#Elements-for-developers)
    - [How to install (developers)](#How-to-install-developers)
+   - [How to commit and push (developers)](#How-to-commit-and-push)
+   - [How to access the app](#How-to-access-the-app) 
    - [Architecture of dirs](#Architecture-of-dirs)
 
 ## Presentation of the app
@@ -77,6 +79,34 @@ NB: On Linux distribution, Python is installed by default.
 NB: The name of this environment can be modified in [tox.ini](tox.ini) file (section `[tox]  envlist=`)
 NB: To recreate your tox env, just rm the `.tox` dir and re-run command `tox`.
 
+### How to commit and push [developers]
+
+Just call [auto_push.sh](auto_push.sh) script. If you are on windows, use `gitbash` to call the script. 
+
+Action performed:
+* Create `enemy.py` from `data/enemy.csv` > permits to avoid using pandas (heavy lib) to handle CSV
+* update version (in `src.__version__` and `buildozer.spec`)
+* stage, commit and push
+
+```
+# Windows gitbash terminal OR Linux terminal:
+>>>source auto_push.sh
+# no argument > commit message automatically generated
+
+>>>source auto_push.sh "my commit message"
+# will commit and push your custom message
+```
+
+### How to access the app 
+
+On your mobile phone, go to the github page of the project:
+* go to "Actions" 
+* click on the last commit (may be green: the app build succeed)
+* at the bottom of the page ("Artifacts") click on download button of "package"
+* Unzip and install the app (pay attention to uninstall older version)
+
+**You may be logged to be able to download the app.**
+
 ### Architecture of dirs
 
 
@@ -86,6 +116,7 @@ NB: To recreate your tox env, just rm the `.tox` dir and re-run command `tox`.
 * dir [data](data/): contains a dataset of typical enemy. 
   * [enemy.csv](data/enemy.csv): contains the stats of typical enemy
 * dir `src/` contains all source code
+    * [__version__](src/__version__.py): a script containing version of the app. Do not touch it, it's automatically updated with `auto_push.sh` script. 
     * [main.py](src/main.py): The main script, permitting to launch an app (via `kivy` python library)
     * sub dir `common` with all useful scripts:
       * [dice](src/common/dice.py): All useful functions permitting to compute stats on dice launch
@@ -95,5 +126,6 @@ NB: To recreate your tox env, just rm the `.tox` dir and re-run command `tox`.
       * [enemy](src/common/enemy.py): A script containing the `enemy.csv` data defined as python dict. Permits to avoid using heavy library (pandas, csv...) and lighten the kivy dependencies.
 * File [.github/workflows/build.yml](.github/workflows/buildozer.yml): contains commands to build the app on github 
 plateform (launched when new code is push). See github documentation [here](https://github.com/ArtemSBulgakov/buildozer-action)
-* File [buildozer.spec](buildozer.spec): File containing command to launch on github servers when code is push
+* File [buildozer.spec](buildozer.spec): File containing command to launch on github servers when code is push. Note that version is automatically filled via `auto_push.sh` script.
 (see details [here](https://github.com/ArtemSBulgakov/buildozer-action/tree/master)
+* Script [auto_push.sh](auto_push.sh): script permitting to update version, commit and push. One single argument: ypur commit message (else, if no argument, automatically produce a commit message)
