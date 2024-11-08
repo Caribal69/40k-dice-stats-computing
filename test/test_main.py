@@ -2,10 +2,17 @@
 Test src.main.py
 """
 
-import pytest
 from kivy.clock import Clock
-from main import Main  # Import your app class
-from typing import Optional
+import pytest
+import os, sys
+
+# Go into root dir to enable imports
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../"
+
+# Modify Python path to enable import custom modules in root dir.
+sys.path.append(ROOT_DIR)
+
+from src.main import Main  # Import your app class
 
 
 error_message_dice_format = 'Bad entry ("{hint_text}"). Get `{text}`, Expected format "XDY+Z" (ex: 2 or 2d6 or 3D3+4) !'

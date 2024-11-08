@@ -26,16 +26,17 @@ from sys import path
 current_dir = dirname(abspath(__file__))
 
 # Get the parent directory
-parent_dir = dirname(current_dir)
+# parent_dir = dirname(current_dir)
 # <absolute_path>/40k-dice-stats-computing/
 
 # Add the parent directory to the Python path
 # path.insert(0, current_dir)
-path.insert(0, parent_dir)
+path.insert(0, current_dir)
 
-from src.common.enemy import opponent_datasheets
-from src.common.workflow import launch_workflow
-from src.common.dice import compute_average_enemy_dead, compute_average_hp_lost, DiceExpression, _parse_str_expression
+# Assuming app is already working on src (see `buildozer.spec[source.dir]`)
+from common.enemy import opponent_datasheets
+from common.workflow import launch_workflow
+from common.dice import compute_average_enemy_dead, compute_average_hp_lost, DiceExpression, _parse_str_expression
 
 class Main(MDApp):
 
@@ -641,4 +642,5 @@ class Main(MDApp):
             self.rr_wounds_one.active = False
         self.compute()
 
-Main().run()
+if __name__ == "__main__":
+    Main().run()
