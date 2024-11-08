@@ -53,8 +53,10 @@ echo "Version updated from $current_version to $new_version"
 echo "Update the version file"
 sed -i "s/VERSION = .*/VERSION = $new_version/" "$VERSION_FILE"
 
-echo "Update version of the app in buildozer file"
-sed -i "s/VERSION = .*/VERSION = $new_version/" "$SPEC_FILE"
+
+# Update the version in the buildozer.spec file and convert "version = " to lowercase
+sed -i "s/^version = .*/version = $new_version/" "$SPEC_FILE"
+sed -i 's/^VERSION = /version = /' "$SPEC_FILE"
 
 
 # 4/ Commit and push
