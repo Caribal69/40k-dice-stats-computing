@@ -54,11 +54,11 @@ echo "Update the version file"
 sed -i "s/VERSION = .*/VERSION = $new_version/" "$VERSION_FILE"
 
 echo "Update version of the app in buildozer file"
-sed -i "s/version = .*/VERSION = $new_version/" "$SPEC_FILE"
+sed -i "s/VERSION = .*/VERSION = $new_version/" "$SPEC_FILE"
 
 
 # 4/ Commit and push
 # --------------------------
 git add .
 git commit -m "$NEW_COMMIT_MESSAGE"
-#git push
+git push

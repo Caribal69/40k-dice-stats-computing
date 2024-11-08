@@ -8,7 +8,7 @@ package.domain = org.test.appname
 source.dir = src
 source.include_exts = py
 
-VERSION = .1
+VERSION = 0.5
 requirements = python3,kivy,kivymd
 
 # (str) python-for-android branch to use, defaults to master
@@ -41,9 +41,9 @@ fullscreen = 0
 android.arch = armeabi-v7a
 
 # change the major version of python used by the app
-osx.python_VERSION = .1
+osx.python_VERSION = 0.5
 # Kivy version to use
-osx.kivy_VERSION = .1
+osx.kivy_VERSION = 0.5
 
 # iOS specific
 ios.kivy_ios_url = https://github.com/kivy/kivy-ios
