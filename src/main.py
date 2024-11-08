@@ -641,5 +641,4 @@ class Main(MDApp):
             self.rr_wounds_one.active = False
         self.compute()
 
-if __name__ == "__main__":
-    Main().run()
+Main().run()
