@@ -25,17 +25,19 @@ def parse_expression(dice_expression: Union[str, int]) -> float:
     Parse `dice_expression` into average result. Contains checkers.
 
     Exemples:
-    * dice_expression = "2D6+1" --> result =  8 (average value of 2D6+1)
-    * dice_expression = "D3" --> result =  2 (average value of D3)
+    * dice_expression = "2D6+1" or "2d6+1"--> result =  8 (average value of 2D6+1)
+    * dice_expression = "D3" or "d3"--> result =  2 (average value of D3)
     * dice_expression = 3 --> result = 3
 
     :param dice_expression: str containing an expression to parse (ex: "2D6+1") or int
     :return: Average result of `dice_expression`
 
     :raises:
-    * ValueError: `dice_expression` is str not containing "D"
+    * ValueError: `dice_expression` is str not containing "D" or "d"
     * ValueError: `dice_expression` not str or number
     """
+    # Get sure "D" instead of "d"
+    dice_expression = str(dice_expression).upper()
 
     # a) regular situation (int)
     try:
@@ -60,8 +62,8 @@ def _parse_str_expression(dice_expression: str) -> DiceExpression:
     Parse `dice_expression` into comprehensive result.
 
     Exemples:
-    * dice_expression = "2D6+1" --> result =  DiceExpression(nb_dice=2, dice_face=6, bonus=1)
-    * dice_expression = "D3" --> result =  DiceExpression(nb_dice=1, dice_face=3, bonus=0)
+    * dice_expression = "2D6+1" or "2d6+1"--> result =  8 (average value of 2D6+1)
+    * dice_expression = "D3" or "d3"--> result =  2 (average value of D3)
 
     :param dice_expression: str containing an expression to parse (ex: 2D6+1)
     :return: `DiceExpression` containing ll relevant infos.
@@ -69,6 +71,9 @@ def _parse_str_expression(dice_expression: str) -> DiceExpression:
     NB: this function does NOT contain any check for optimality reason (check is done one single time, this
     function shall be called many times).
     """
+    # Get sure "D" instead of "d"
+    dice_expression = str(dice_expression).upper()
+
     s1 = dice_expression.split("D")
     # ex: "2D6+1" -> ['2', '6+1']
 

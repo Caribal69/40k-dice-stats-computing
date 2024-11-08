@@ -257,8 +257,7 @@ def launch_workflow(nb_figs: int = nb_figs,
         ennemy_dead += 1
 
     if verbose:
-        from statistics import mean
-        print(f"Nb dead (average): {mean(ennemy_dead)}, 1 ennemy remains with {remaining_hp}/{ennemy_hp} HP")
+        print(f"Nb dead (average): {ennemy_dead}, 1 ennemy remains with {remaining_hp}/{ennemy_hp} HP")
 
     return ennemy_dead, remaining_hp
 

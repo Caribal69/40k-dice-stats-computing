@@ -60,6 +60,19 @@ class Main(MDApp):
     # Spacing between each widget
     SPACING = Window.height / 20
 
+    # Default values:
+    # ------------------
+    DEFAULT_NB_FIGS = str(10)
+    DEFAULT_A = str(1)
+    DEFAULT_BS = "3+"
+    DEFAULT_S = str(4)
+    DEFAULT_AP = str(-1)
+    DEFAULT_D = str(1)
+    DEFAULT_CRIT = str(6)
+    DEFAULT_SUSTAIN_HIT = str(0)
+
+
+
     def build(self):
         """
         Main function permitting to build kivy interface.
@@ -105,7 +118,7 @@ class Main(MDApp):
 
         # Number of figs of the attacking unit
         self.field_nb_figs = MDTextField(id='nb_figs',
-                                         text=str(10),
+                                         text=self.DEFAULT_NB_FIGS,
                                          hint_text='Nb figurines',
                                          size_hint_x=None,
                                          width=Window.width/3,
@@ -126,7 +139,7 @@ class Main(MDApp):
                         )
         # Nb attack
         self.field_a = MDTextField(id='A',
-                                   text=str(1),
+                                   text=self.DEFAULT_A,
                                    hint_text='A',
                                    size_hint_x=None,
                                    width=Window.width/4,
@@ -138,7 +151,7 @@ class Main(MDApp):
 
         # BS
         self.field_bs = MDTextField(id='bs',
-                                    text="3+",
+                                    text=self.DEFAULT_BS,
                                     hint_text='CT',
                                     size_hint_x=None,
                                     width=Window.width/4,
@@ -151,7 +164,7 @@ class Main(MDApp):
         # s
         self.field_s = MDTextField(id='S',
                                    hint_text='S',
-                                   text=str(4),
+                                   text=self.DEFAULT_S,
                                    size_hint_x=None,
                                    width=Window.width/4,
                                    icon_right="arm-flex",
@@ -163,7 +176,7 @@ class Main(MDApp):
         # AP
         self.field_ap = MDTextField(id='AP',
                                     hint_text='AP',
-                                    text=str(-1),
+                                    text=self.DEFAULT_AP,
                                     size_hint_x=None,
                                     width=Window.width/4,
                                     icon_right="shield-alert",
@@ -174,7 +187,7 @@ class Main(MDApp):
 
         # Damage
         self.field_dmg = MDTextField(id='D',
-                                     text=str(1),
+                                     text=self.DEFAULT_D,
                                      hint_text='D',
                                      size_hint_x=None,
                                      width=Window.width/4,
@@ -186,7 +199,7 @@ class Main(MDApp):
 
         # Critical
         self.field_crits = MDTextField(id='crit',
-                                       text=str(6),
+                                       text=self.DEFAULT_CRIT,
                                        hint_text='crit',
                                        size_hint_x=None,
                                        width=Window.width/4,
@@ -208,9 +221,9 @@ class Main(MDApp):
                                      size_hint_y=None,
                                      # height=dp(30),
                                      ))
-        # TODO: sous forme de menu déroulant:
+        # todo: sous forme de menu déroulant:
         self.sustain_hit = MDTextField(id='sh',
-                                       text=str(0),
+                                       text=self.DEFAULT_SUSTAIN_HIT,
                                        hint_text='Sustain (ex "D3+1")',
                                        size_hint_x=None,
                                        width=Window.width/3,
@@ -218,6 +231,7 @@ class Main(MDApp):
                                        on_text_validate=lambda x: self.compute()
                                        )
         self.grid.add_widget(self.sustain_hit)
+        # todo: add anti vehicul, infantry, fly, ...
 
         # ------------------------------------------
         # Checkobxes (options)
@@ -309,6 +323,7 @@ class Main(MDApp):
                                            )
         g2.add_widget(self.field_deva_wound)
 
+        # TODO: add custom ennemy: HP, T, Svg, SVG invu, FNP > add this profile to the table (pre-filled form / row in the table)
 
         # ------------------------------------------
         # Submit button
@@ -351,39 +366,51 @@ class Main(MDApp):
 
     # CHECKER
     # ----------------------------------------------------------------------------
-    def check_entry_sustain_hit(self):
+    def check_dice_expression(self, text_field_widget: MDTextField, default_value: str) -> None:
         """
-        Check content of `self.sustain_hit.text`. If wrong format, open error dialog.
-        Ex of correct format: "2D6+1", "2D6", "2".
+        Check field `text_field_widget`. Shall corresponds to a "dice expression" (ex: 3, "2d6+1", "4D3")
+        :param text_field_widget: TextField widget to check
+        :param default_value: The default value (reset to default if any error detected)
         """
-        if self.parse_str_to_dice_expression(self.sustain_hit.text)!= self.ERROR_VALUE:
-            print("Content 'Sustain hit', value ok")
+        if self.parse_str_to_dice_expression(text_field_widget.text) != self.ERROR_VALUE:
+            print(f"Content: '{text_field_widget.hint_text}', value ok")
+            # ex: "Content: 'Nb figurines', value ok"
         else:
             # Error popup
             self.dialog = MDDialog(title='Bad entry',
-                                   text=f'Bad entry "sustain hit". Expected format "XDY+Z" (ex: 2 or 2D6 or 3D6+4) !',
+                                   text=f'Bad entry ("{text_field_widget.hint_text}"). Get `{text_field_widget.text}`, Expected format "XDY+Z" (ex: 2 or 2d6 or 3D3+4) !',
+                                   # ex: 'Bad entry ("NB figurines"). Expected int !'
                                    size_hint=(0.8, 1),
                                    buttons=[MDFlatButton(text='Close', on_release=self.close_dialog)]
                                    )
+            # Reset value to default
+            text_field_widget.text = default_value
+
             self.dialog.open()
 
-    def check_int_entry(self, text_field_widget: MDTextField) -> None:
+    def check_int_entry(self, text_field_widget: MDTextField, default_value: str) -> None:
         """
         Check content of `field_text`. If not int > open error dialog box.
 
         :param text_field_widget: TextField widget to check
-        :param format_expected: Format expected for `test_widget.text` (only used for message). Ex: "2D6+1". Ex: "int"
+        :param default_value: The default value (reset to default if any error detected)
         """
 
         if self.parse_str_to_int(text_field_widget.text) != self.ERROR_VALUE:
             print(f"Content: '{text_field_widget.hint_text}', value ok")
+            # ex: "Content: 'Nb figurines', value ok"
         else:
             # Error popup
             self.dialog = MDDialog(title='Bad entry',
-                                   text=f'Bad entry ("{text_field_widget.hint_text}"). Expected int !',
+                                   text=f'Bad entry ("{text_field_widget.hint_text}"). Get `{text_field_widget.text}`, expected int !',
+                                   # ex: 'Bad entry ("NB figurines"). Expected int !'
                                    size_hint=(0.8, 1),
                                    buttons=[MDFlatButton(text='Close', on_release=self.close_dialog)]
                                    )
+
+            # Reset value to default
+            text_field_widget.text = default_value
+
             self.dialog.open()
 
     def close_dialog(self, obj):
@@ -405,11 +432,13 @@ class Main(MDApp):
     def parse_str_to_dice_expression(self, entry: str) -> DiceExpression | int:
         """
         Parse content of `entry` (str -> DiceExpression).
+
+        Pay attention: value to upper > transforms "d" into "D" (to avoid errors)
         """
         try:
             entry_dice_expression = _parse_str_expression(entry)
             return entry_dice_expression
-        except:
+        except ValueError:
             return self.ERROR_VALUE
 
     # COMPUTE
@@ -418,98 +447,114 @@ class Main(MDApp):
         """
         Compute dice proba on all `opponent_datasheet`. Update `self.result_dict`
         """
-        start_process = time()
+        try:
+            start_process = time()
 
-        print("COMPUTE")
-        print("-"*200)
+            print("COMPUTE")
+            print("-"*200)
 
-        # 0/ Check content of fields (if wrong content, app crash)
-        # ------------------------------------------
-        self.check_int_entry(self.field_nb_figs)
-        self.check_int_entry(self.field_a)
-        # DO NOT check CT as int entry, because contains "+" --> from now, not checked
-        self.check_int_entry(self.field_s)
-        self.check_int_entry(self.field_ap)
-        self.check_int_entry(self.field_dmg)
-        self.check_int_entry(self.field_crits)
+            # 0/ Check content of fields (if wrong content message textbox and reset value to default)
+            # ----------------------------------------------------------
+            self.check_int_entry(self.field_nb_figs, default_value=self.DEFAULT_NB_FIGS)
+            # DO NOT check CT as int entry, because contains "+" --> from now, not checked
+            self.check_int_entry(self.field_s, default_value=self.DEFAULT_S)
+            self.check_int_entry(self.field_ap, default_value=self.DEFAULT_AP)
+            self.check_int_entry(self.field_dmg, default_value=self.DEFAULT_D)
+            self.check_int_entry(self.field_crits, default_value=self.DEFAULT_CRIT)
 
-        self.check_entry_sustain_hit()
+            # Field of type "3" or "2d6" or "2D3+1"...
+            self.check_dice_expression(self.sustain_hit, default_value=self.DEFAULT_SUSTAIN_HIT)
+            self.check_dice_expression(self.field_a, default_value=self.DEFAULT_A)
+            self.check_dice_expression(self.field_dmg, default_value=self.DEFAULT_D)
 
-        # 1/ Retrieve results from user demand
-        # ------------------------------------------
-        nb_figs = int(self.field_nb_figs.text)
-        crit = int(self.field_crits.text)
-        weapon_a = int(self.field_a.text)
-
-        if "+" in self.field_bs.text:
-            # ex: 3+ into 3
-            hit_threshold = int(self.field_bs.text.split("+")[0])
-        else:
-            hit_threshold = int(self.field_bs.text)
-        weapon_s = int(self.field_s.text)
-        # AP into positive number
-        weapon_ap = -int(self.field_ap.text)
-        weapon_d = int(self.field_dmg.text)
-
-        sustain_hit = self.sustain_hit.text
-        # TODO/ add field bonus wound
-        bonus_wound = 0
-
-        torrent = self.field_torrent.active
-        rr_hit_ones = self.rr_hit_ones.active
-        rr_hit_all = self.rr_hit_all.active
-        lethal_hit = self.field_lethal_hit.active
-        rr_wounds_ones = self.rr_wounds_one.active
-        twin = self.rr_wound_all.active
-        devastating_wounds = self.field_deva_wound.active
-
-        # 2/ Compute
-        # ------------------------------------------
-        enemy_names = list(opponent_datasheets.keys())
-        # ["marine", "sororita", ...]
-
-        for index, name in enumerate(enemy_names):
-            # select one row
-            current_carac = opponent_datasheets[name]
-            # ex: {'svg': 3, 'svg invul': None, 'feel no pain': None, 'toughness': 4, 'w': 2}
-
-            # Compute the effect of the weapon on the current enemy
-            ennemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
-                                                        crit=crit,
-                                                        weapon_a=weapon_a,
-                                                        hit_threshold=hit_threshold,
-                                                        weapon_s=weapon_s,
-                                                        weapon_ap=weapon_ap,
-                                                        weapon_d=weapon_d,
-                                                        sustain_hit=sustain_hit,
-                                                        bonus_wound=bonus_wound,
-                                                        torrent=torrent,
-                                                        rr_hit_ones=rr_hit_ones,
-                                                        rr_hit_all=rr_hit_all,
-                                                        lethal_hit=lethal_hit,
-                                                        rr_wounds_ones=rr_wounds_ones,
-                                                        twin=twin,
-                                                        devastating_wounds=devastating_wounds,
-                                                        enemy_toughness=current_carac["toughness"],
-                                                        svg_enemy=current_carac["svg"],
-                                                        svg_invul_enemy=current_carac["svg invul"],
-                                                        fnp_enemy=current_carac["feel no pain"],
-                                                        ennemy_hp=current_carac["w"],
-                                                        verbose=self.LAUNCH_WORKFLOW_VERBOSE)
-            # Include `remaining_hp` in the average of deads
-            average_ennemy_dead = compute_average_enemy_dead(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
-            average_hp_lost = compute_average_hp_lost(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
-
-            print(f"Average dead on {name}: {average_ennemy_dead}")
-
-            # Fill `result_dict`
+            # 1/ Retrieve results from user demand
             # ------------------------------------------
-            self.result_dict['average dead enemy'][index] = average_ennemy_dead
-            self.result_dict['average HP lost'][index] = average_hp_lost
+            nb_figs = int(self.field_nb_figs.text)
+            crit = int(self.field_crits.text)
 
-        self.update_widget_table(self.result_dict)
+            if "+" in self.field_bs.text:
+                # ex: 3+ into 3
+                hit_threshold = int(self.field_bs.text.split("+")[0])
+            else:
+                hit_threshold = int(self.field_bs.text)
+            weapon_s = int(self.field_s.text)
+            # AP into positive number
+            weapon_ap = -int(self.field_ap.text)
 
-        print(f"Time to compute: {time() - start_process}s.")
+            # Field of type "3" or "2d6" or "2D3+1"...
+            weapon_d = str(self.field_dmg.text)
+            weapon_a = str(self.field_a.text)
+            sustain_hit = self.sustain_hit.text
+
+            # todo/ add field bonus wound
+            bonus_wound = 0
+
+            # Bool
+            torrent = self.field_torrent.active
+            rr_hit_ones = self.rr_hit_ones.active
+            rr_hit_all = self.rr_hit_all.active
+            lethal_hit = self.field_lethal_hit.active
+            rr_wounds_ones = self.rr_wounds_one.active
+            twin = self.rr_wound_all.active
+            devastating_wounds = self.field_deva_wound.active
+
+            # 2/ Compute
+            # ------------------------------------------
+            enemy_names = list(opponent_datasheets.keys())
+            # ["marine", "sororita", ...]
+
+            for index, name in enumerate(enemy_names):
+                # select one row
+                current_carac = opponent_datasheets[name]
+                # ex: {'svg': 3, 'svg invul': None, 'feel no pain': None, 'toughness': 4, 'w': 2}
+
+                # Compute the effect of the weapon on the current enemy
+                ennemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
+                                                            crit=crit,
+                                                            weapon_a=weapon_a,
+                                                            hit_threshold=hit_threshold,
+                                                            weapon_s=weapon_s,
+                                                            weapon_ap=weapon_ap,
+                                                            weapon_d=weapon_d,
+                                                            sustain_hit=sustain_hit,
+                                                            bonus_wound=bonus_wound,
+                                                            torrent=torrent,
+                                                            rr_hit_ones=rr_hit_ones,
+                                                            rr_hit_all=rr_hit_all,
+                                                            lethal_hit=lethal_hit,
+                                                            rr_wounds_ones=rr_wounds_ones,
+                                                            twin=twin,
+                                                            devastating_wounds=devastating_wounds,
+                                                            enemy_toughness=current_carac["toughness"],
+                                                            svg_enemy=current_carac["svg"],
+                                                            svg_invul_enemy=current_carac["svg invul"],
+                                                            fnp_enemy=current_carac["feel no pain"],
+                                                            ennemy_hp=current_carac["w"],
+                                                            verbose=self.LAUNCH_WORKFLOW_VERBOSE)
+                # Include `remaining_hp` in the average of deads
+                average_ennemy_dead = compute_average_enemy_dead(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
+                average_hp_lost = compute_average_hp_lost(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
+
+                print(f"Average dead on {name}: {average_ennemy_dead}")
+
+                # Fill `result_dict`
+                # ------------------------------------------
+                self.result_dict['average dead enemy'][index] = average_ennemy_dead
+                self.result_dict['average HP lost'][index] = average_hp_lost
+
+                self.update_widget_table(self.result_dict)
+
+                print(f"Time to compute: {time() - start_process}s.")
+    
+        except Exception as e:
+            # Error popup
+            self.dialog = MDDialog(title='Bad entry',
+                                   text=f'Error: {e}',
+                                   # ex: 'Bad entry ("NB figurines"). Expected int !'
+                                   size_hint=(0.8, 1),
+                                   buttons=[MDFlatButton(text='Close', on_release=self.close_dialog)]
+                                   )
+            self.dialog.open()
 
     # Manage table
     # ------------------------------------------------

@@ -7,7 +7,7 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 (see [main.py](main.py))
 
 ## Table of Contents
-1. [Presentation of the app](#presentation-of-the-app)
+1. [Presentation of the app]( #presentation-of-the-app)
 2. [Questions](#questions)
    - [How to start](#how-to-start)
    - [How to add more profiles (datasheet) ?](#how-to-add-more-profiles-datasheet)

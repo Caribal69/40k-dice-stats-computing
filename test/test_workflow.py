@@ -18,8 +18,8 @@ ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../"
 # Modify Python path to enable import custom modules in root dir.
 sys.path.append(ROOT_DIR)
 
-from src.workflow import launch_workflow
-from src.dice import compute_average_enemy_dead
+from src.common.workflow import launch_workflow
+from src.common.dice import compute_average_enemy_dead
 
 # UTILS : WRAPPERS
 # ---------------------------------------------------------------------

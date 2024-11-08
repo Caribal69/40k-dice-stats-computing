@@ -11,7 +11,7 @@ ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../"
 # Modify Python path to enable import custom modules in root dir.
 sys.path.append(ROOT_DIR)
 
-from src.dice import *
+from src.common.dice import *
 
 
 def test_parse_expression():
@@ -26,6 +26,15 @@ def test_parse_expression():
     assert parse_expression("D6") == 3.5 # 3.5
     assert parse_expression("2D6") == 7  # 7
     assert parse_expression("D6+1") == 4.5  # 4.5
+
+    # Lower case
+    assert parse_expression("2d6+1") == 8  # 8
+    assert parse_expression("d3") == 2  # 2
+    assert parse_expression("2d3") == 4  # 4
+    assert parse_expression("d3+1") == 3  # 3
+    assert parse_expression("d6") == 3.5 # 3.5
+    assert parse_expression("2d6") == 7  # 7
+    assert parse_expression("d6+1") == 4.5  # 4.5
 
     assert parse_expression(3) == 3
 
