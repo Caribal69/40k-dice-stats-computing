@@ -1,4 +1,5 @@
 # Update the badge "version" on readme.md
+# TODO: update to se it
 name: Update Version Badge
 
 on:
