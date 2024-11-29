@@ -34,7 +34,7 @@ jobs:
         shell: bash
 
       - name: Run tests with coverage
-        run: pytest --cov=src test/
+        run: pytest -v --cov=src test/ --log-cli-level=DEBUG
 
       - name: Generate coverage badge
         run: coverage-badge -o coverage_badge.svg
