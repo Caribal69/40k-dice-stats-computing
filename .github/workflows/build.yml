@@ -33,6 +33,20 @@ jobs:
           fi
         shell: bash
 
+      - name: Run tests with coverage
+        run: pytest --cov=src test/
+
+      - name: Generate coverage badge
+        run: coverage-badge -o coverage_badge.svg
+
+      - name: Commit and push coverage badge
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add coverage_badge.svg
+          git commit -m "Update coverage badge" || true
+          git push
+
       - name: Buildozer dependencies
         run: |
           sudo apt update
@@ -67,21 +81,3 @@ jobs:
         with:
           name: package
           path: bin/*.apk
-          # path: ${{ steps.buildozer.outputs.filename }}
-
-#      # Push result into branch "data" (in dir "bin/")
-#      - name: Configure Git
-#        run: |
-#          git config user.name "github-actions[bot]"
-#          git config user.email "github-actions[bot]@users.noreply.github.com"
-#
-#      - name: Move to branch data
-#        run: git checkout data
-#
-#      - name: Commit and Push Artifact to branch "data"
-#        run: |
-#          git add *apk
-#          git commit -m "Add artifact to bin directory"
-#          git push origin data
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

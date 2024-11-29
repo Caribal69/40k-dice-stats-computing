@@ -11,10 +11,6 @@ python build_enemy.py
 
 cd ../..
 
-# Generate badge of test coverage
-pytest --cov=src test/
-coverage-badge -o coverage_badge.svg
-
 # 2/ Commit message
 # --------------------------
 if [ "$#" -eq 0 ]; then
