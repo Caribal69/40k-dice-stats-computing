@@ -6,6 +6,13 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 * An interface, coded with `kivy` to enable android app. In this app, you can compute stats and compare results on typical enemy stats (marine, tank, ...)
 (see [main.py](main.py))
 
+<!-- Badges -->
+
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-311/)
+
+![coverage](coverage_badge.svg)
+
+
 ## Table of Contents
 1. [Presentation of the app]( #presentation-of-the-app)
 2. [Questions](#questions)

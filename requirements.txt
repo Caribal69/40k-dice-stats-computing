@@ -1,6 +1,6 @@
 # List here all python package necessary to run the application
 # distutils
-kivy
+kivy==2.3.0
 # kivy-deps.angle
 # kivy-deps.glew
 # kivy-deps.gstreamer
@@ -8,12 +8,14 @@ kivy
 kivymd
 
 pytest
+pytest-cov
+coverage-badge
 numpy
 pandas
-ipywidgets
-voila
+# ipywidgets
+# voila
 tox
 # Working in april 2024
-jupyter==1.0.0
-jupyterlab==4.1.8
+# jupyter==1.0.0
+# jupyterlab==4.1.8
 pretty-html-table
