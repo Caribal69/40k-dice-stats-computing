@@ -37,8 +37,13 @@ path.insert(0, current_dir)
 from common.enemy import opponent_datasheets
 from common.workflow import launch_workflow
 from common.dice import compute_average_enemy_dead, compute_average_hp_lost, DiceExpression, _parse_str_expression
+from common.utils import ROOT_PATH
+from os.path import join
 
 class Main(MDApp):
+
+    # ICON PATH
+    icon = join(ROOT_PATH, "data", "icon.ico")
 
     # Value given to a text if it does not fill the conditions of parsing
     # (e.g.  value is not int > transformed into `ERROR_VALUE`)
@@ -67,12 +72,18 @@ class Main(MDApp):
     DEFAULT_A = str(1)
     DEFAULT_BS = "3+"
     DEFAULT_S = str(4)
-    DEFAULT_AP = str(-1)
+    DEFAULT_AP = str(1)
     DEFAULT_D = str(1)
     DEFAULT_CRIT = str(6)
     DEFAULT_SUSTAIN_HIT = str(0)
 
-
+    # Custom enemy (here custom enemy is space marine)
+    DEFAULT_CUSTOM_ENEMY_NAME = "Custom enemy"
+    DEFAULT_HP = str(2)
+    DEFAULT_T = str(4)
+    DEFAULT_SVG = str(3)
+    DEFAULT_SVG_INVU = str(7)  # 7 = no svg
+    DEFAULT_FNP = str(7)  # 7 = no svg
 
     def build(self):
         """
@@ -324,7 +335,82 @@ class Main(MDApp):
                                            )
         g2.add_widget(self.field_deva_wound)
 
-        # TODO: add custom ennemy: HP, T, Svg, SVG invu, FNP > add this profile to the table (pre-filled form / row in the table)
+        # ------------------------------------------
+        # Custom enemy
+        # ------------------------------------------
+        # Main title
+        self.grid.add_widget(MDLabel(text='Custom enemy',
+                                     font_style="H5",
+                                     halign="center",
+                                     size_hint_y=None,
+                                     # height=dp(30),
+                                     ))
+
+        g3 = MDGridLayout(rows=2,
+                          size_hint_y=None,
+                          height=2 * Window.height / 10  # pre-define height to avoid overlap
+                          )
+        # HP
+        self.field_hp = MDTextField(id='HP',
+                                   text=self.DEFAULT_HP,
+                                   hint_text='HP',
+                                   size_hint_x=None,
+                                   width=Window.width / 4,
+                                   icon_right="account-heart",
+                                   required=True,
+                                   on_text_validate=lambda x: self.compute()
+                                   )
+        g3.add_widget(self.field_hp)
+
+        # T
+        self.field_t = MDTextField(id='T',
+                                    text=self.DEFAULT_T,
+                                    hint_text='T',
+                                    size_hint_x=None,
+                                    width=Window.width / 4,
+                                     icon_right="anvil",
+                                    required=True,
+                                    on_release=lambda x: self.compute()
+                                    )
+        g3.add_widget(self.field_t)
+
+        # svg
+        self.field_svg = MDTextField(id='Svg',
+                                   hint_text='Svg',
+                                   text=self.DEFAULT_SVG,
+                                   size_hint_x=None,
+                                   width=Window.width / 4,
+                                   icon_right="shield-lock-open-outline",
+                                   required=True,
+                                   on_release=lambda x: self.compute()
+                                   )
+        g3.add_widget(self.field_svg)
+
+        # Invulnerable save
+        self.field_svg_invu = MDTextField(id='Svg invu',
+                                    hint_text='Svg invu',
+                                    text=self.DEFAULT_SVG_INVU,
+                                    size_hint_x=None,
+                                    width=Window.width / 4,
+                                    icon_right="shield-lock-outline",
+                                    required=True,
+                                    on_release=lambda x: self.compute()
+                                    )
+        g3.add_widget(self.field_svg_invu)
+
+        # FNP
+        self.field_fnp = MDTextField(id='FNP',
+                                     text=self.DEFAULT_FNP,
+                                     hint_text='FNP',
+                                     size_hint_x=None,
+                                     width=Window.width / 4,
+                                     icon_right="wall",
+                                     required=True,
+                                     on_release=lambda x: self.compute()
+                                     )
+        g3.add_widget(self.field_fnp)
+
+        self.grid.add_widget(g3)
 
         # ------------------------------------------
         # Submit button
@@ -339,7 +425,7 @@ class Main(MDApp):
         # ------------------------------------------
         # Results
         # ------------------------------------------
-        self.enemy_names = list(opponent_datasheets.keys())
+        self.enemy_names = [self.DEFAULT_CUSTOM_ENEMY_NAME] + list(opponent_datasheets.keys())
         # ["marine", "sororita", ...]
 
         # Init result df full of 0
@@ -482,8 +568,7 @@ class Main(MDApp):
             else:
                 hit_threshold = int(self.field_bs.text)
             weapon_s = int(self.field_s.text)
-            # AP into positive number
-            weapon_ap = -int(self.field_ap.text)
+            weapon_ap = int(self.field_ap.text)
 
             # Field of type "3" or "2d6" or "2D3+1"...
             weapon_d = str(self.field_dmg.text)
@@ -502,18 +587,18 @@ class Main(MDApp):
             twin = self.rr_wound_all.active
             devastating_wounds = self.field_deva_wound.active
 
+            # 1.2/ Retrieve custom enemy datasheet
+            self.add_custom_enemy()
+
             # 2/ Compute
             # ------------------------------------------
-            enemy_names = list(opponent_datasheets.keys())
-            # ["marine", "sororita", ...]
-
-            for index, name in enumerate(enemy_names):
+            for index, name in enumerate(self.enemy_names):
                 # select one row
                 current_carac = opponent_datasheets[name]
                 # ex: {'svg': 3, 'svg invul': None, 'feel no pain': None, 'toughness': 4, 'w': 2}
 
                 # Compute the effect of the weapon on the current enemy
-                ennemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
+                enemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
                                                             crit=crit,
                                                             weapon_a=weapon_a,
                                                             hit_threshold=hit_threshold,
@@ -533,22 +618,24 @@ class Main(MDApp):
                                                             svg_enemy=current_carac["svg"],
                                                             svg_invul_enemy=current_carac["svg invul"],
                                                             fnp_enemy=current_carac["feel no pain"],
-                                                            ennemy_hp=current_carac["w"],
+                                                            enemy_hp=current_carac["w"],
                                                             verbose=self.LAUNCH_WORKFLOW_VERBOSE)
                 # Include `remaining_hp` in the average of deads
-                average_ennemy_dead = compute_average_enemy_dead(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
-                average_hp_lost = compute_average_hp_lost(enemy_dead=ennemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
+                average_enemy_dead = compute_average_enemy_dead(enemy_dead=enemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
+                average_hp_lost = compute_average_hp_lost(enemy_dead=enemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
 
-                print(f"Average dead on {name}: {average_ennemy_dead}")
+                print(f"Average dead on {name}: {average_enemy_dead}")
 
                 # Fill `result_dict`
                 # ------------------------------------------
-                self.result_dict['average dead enemy'][index] = average_ennemy_dead
+                self.result_dict['average dead enemy'][index] = average_enemy_dead
                 self.result_dict['average HP lost'][index] = average_hp_lost
 
-                self.update_widget_table(self.result_dict)
+            # Optim: update dict one single time
+            self.update_widget_table(self.result_dict)
+            print(self.result_dict)
 
-                print(f"Time to compute: {time() - start_process}s.")
+            print(f"Time to compute: {time() - start_process}s.")
 
         except Exception as e:
             # Error popup
@@ -562,6 +649,28 @@ class Main(MDApp):
 
     # Manage table
     # ------------------------------------------------
+    def add_custom_enemy(self):
+        """
+        Fuction to call when user modify one of the "custom enemy" field.
+
+        Action performed: modify `self.widget_table`
+        """
+        # check
+        self.check_int_entry(self.field_svg, default_value=self.DEFAULT_SVG)
+        self.check_int_entry(self.field_svg_invu, default_value=self.DEFAULT_SVG_INVU)
+        self.check_int_entry(self.field_fnp, default_value=self.DEFAULT_FNP)
+        self.check_int_entry(self.field_t, default_value=self.DEFAULT_T)
+        self.check_int_entry(self.field_hp, default_value=self.DEFAULT_HP)
+
+        # add one entry in `opponent_datasheets`
+        opponent_datasheets[self.DEFAULT_CUSTOM_ENEMY_NAME] = {
+            'svg': int(self.field_svg.text) if int(self.field_svg.text) != 7 else None,
+            'svg invul': int(self.field_svg_invu.text) if int(self.field_svg_invu.text) != 7 else None,
+            'feel no pain': int(self.field_fnp.text) if int(self.field_fnp.text) != 7 else None,
+            'toughness': int(self.field_t.text),
+            'w': int(self.field_hp.text)
+        }
+
     @staticmethod
     def __table_to_tuples(table: dict) -> list:
         """

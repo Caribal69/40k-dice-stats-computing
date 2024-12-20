@@ -33,7 +33,7 @@ def launch(nb_figs=10,
            svg_enemy=4,
            svg_invul_enemy=7,  # no save
            fnp_enemy=7,  # no fnp
-           ennemy_hp=1,
+           enemy_hp=1,
            sustain_hit=0,
            crit=6,
            **kwargs):
@@ -51,7 +51,7 @@ def launch(nb_figs=10,
     * twin
     * devastating_wounds
 
-    :return: Average lost HP of opponent ennemy_dead+(ennemy_hp-remaining_hp)
+    :return: Average lost HP of opponent enemy_dead+(enemy_hp-remaining_hp)
     """
 
     enemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
@@ -66,12 +66,12 @@ def launch(nb_figs=10,
                                                 crit=crit,
                                                 weapon_d=weapon_d,
                                                 fnp_enemy=fnp_enemy,
-                                                ennemy_hp=ennemy_hp,
+                                                enemy_hp=enemy_hp,
                                                 sustain_hit=sustain_hit,
                                                 **kwargs,
                                                 )
     # return lost models
-    return compute_average_enemy_dead(enemy_dead=enemy_dead, remaining_hp=remaining_hp, enemy_hp=ennemy_hp)
+    return compute_average_enemy_dead(enemy_dead=enemy_dead, remaining_hp=remaining_hp, enemy_hp=enemy_hp)
 
 def compare_to_expected(expected: float, **kwargs):
     """"
@@ -113,7 +113,7 @@ def test_reroll_wounds():
     compare_to_expected(expected=10 * 0.75 * 0.5 * 0.5, twin=True)
 
     # 10 shots, skill = 3+, wound = 5+
-    # ennemy = T5 / S4 (wound 5+), svg 3+
+    # enemy = T5 / S4 (wound 5+), svg 3+
     # Result (expected): 10*2/3*1/3*1/3 =~ 0.74 > no rr
     # Result (expected): 10 * 2/3 * (1/3 + 1/9) * 1/3 =~ 0.98 > with twin
 
@@ -170,7 +170,7 @@ def test_torrent_twin():
                         hit_threshold=3,
                         weapon_s=4,
                         weapon_ap=1,
-                        ennemy_hp=1,
+                        enemy_hp=1,
                         enemy_toughness=5,
                         svg_enemy=2,
                         torrent=True,

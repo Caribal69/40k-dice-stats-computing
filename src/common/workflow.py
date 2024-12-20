@@ -26,7 +26,7 @@ from common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit
     get_wound_threshold, parse_expression, proba_crit
 from common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
                        rr_hit_ones, rr_hit_all, sustain_hit, lethal_hit, rr_wounds_ones, twin, devastating_wounds,
-                       enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, ennemy_hp, VERBOSE)
+                       enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, enemy_hp, VERBOSE)
 
 
 def launch_workflow(nb_figs: int = nb_figs,
@@ -49,7 +49,7 @@ def launch_workflow(nb_figs: int = nb_figs,
                     svg_enemy:int=svg_enemy,
                     svg_invul_enemy:int=svg_invul_enemy,
                     fnp_enemy:int=fnp_enemy,
-                    ennemy_hp:int=ennemy_hp,
+                    enemy_hp:int=enemy_hp,
                     verbose:bool=VERBOSE) -> Tuple[float, float]:
     """
     Compute (average dead, remaining HP) based on statistics.
@@ -74,12 +74,12 @@ def launch_workflow(nb_figs: int = nb_figs,
     :param svg_enemy: Save of the enemy (4 means 4+, 7 means no save)
     :param svg_invul_enemy: Invulnerable save of the enemy (4 means 4+, 7 means no save)
     :param fnp_enemy: Feel no Pain (FNP) (4 means 4+, 7 means no FNP), default 7
-    :param ennemy_hp: Health Point (hp) of the ennemy
+    :param enemy_hp: Health Point (hp) of the enemy
     :param verbose: Set to True to print debug elements
 
     :return: Tuple composed by:
-        * ennemy_dead: number of ennemy dead
-        * remaining_hp: remaining HP of a non dead ennemy figurine
+        * enemy_dead: number of enemy dead
+        * remaining_hp: remaining HP of a non dead enemy figurine
     """
     # ------------------------------------------------------------------------------
     # 0/ Init
@@ -138,7 +138,7 @@ def launch_workflow(nb_figs: int = nb_figs,
     # A critical hit is always a hit
     hit_threshold = min(crit, hit_threshold)
 
-    # Compute ennemy save
+    # Compute enemy save
     # ------------------------------------------------------------------------------
     # Apply AP
     svg_enemy = min(svg_enemy + weapon_ap, 7)
@@ -235,12 +235,12 @@ def launch_workflow(nb_figs: int = nb_figs,
     remaining_failed_saves = failed_svg - failed_saved_int  # ex: 0.3
 
     # Compute proba to fail feel no pain
-    proba_fnp_failed = proba_dice(dice_requested=fnp_enemy, succeed=False)  # 1 if fnp_ennemy=7
+    proba_fnp_failed = proba_dice(dice_requested=fnp_enemy, succeed=False)  # 1 if fnp_enemy=7
 
     # counter of deads
-    ennemy_dead = 0
+    enemy_dead = 0
     # Int changing during the loop. represent THE figurine with remaining hp
-    remaining_hp = ennemy_hp
+    remaining_hp = enemy_hp
     # Apply damage (ex: 1D6) and average fnp
     damage = parse_expression(weapon_d) * proba_fnp_failed  # ex: 2
     if verbose: print(f"Average damage: {damage} (including {fnp_enemy}+ feel no pain)")
@@ -253,8 +253,8 @@ def launch_workflow(nb_figs: int = nb_figs,
     if failed_saved_int > 0:
         for i, d in enumerate(range(failed_saved_int)):
             if damage >= remaining_hp:  # damage will kill the unit
-                ennemy_dead += 1
-                remaining_hp = ennemy_hp
+                enemy_dead += 1
+                remaining_hp = enemy_hp
             else:  # damage won't kill the unit
                 remaining_hp -= damage
 
@@ -266,12 +266,12 @@ def launch_workflow(nb_figs: int = nb_figs,
     # Get sure to avoid imbecil results (e.g. remaining_failed_saves=0.99 > certainly more deads if sufficient damage)
     if remaining_hp < 0:
         remaining_hp = 0
-        ennemy_dead += 1
+        enemy_dead += 1
 
     if verbose:
-        print(f"Nb dead (average): {ennemy_dead}, 1 ennemy remains with {remaining_hp}/{ennemy_hp} HP")
+        print(f"Nb dead (average): {enemy_dead}, 1 enemy remains with {remaining_hp}/{enemy_hp} HP")
 
-    return ennemy_dead, remaining_hp
+    return enemy_dead, remaining_hp
 
 if __name__ == "__main__":
     print(launch_workflow(verbose=True))

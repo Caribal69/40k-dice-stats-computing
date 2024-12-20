@@ -30,6 +30,7 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 
 The app permits to compute average dead / wounds given to typical classes of ennemy. It permits to evaluate the strenght of
 an unit / weapon on a glimpse. Here are the typical enemy considered (their stats are stored in [data/enemy.csv](data/enemy.csv)):
+* custom enemy
 * space marine
 * sorotita default soldier
 * astra militarum guard
@@ -56,6 +57,10 @@ python main.py
 Update file [data/enemy.csv](data/enemy.csv).
 "Compile" file: `python src/build_enemy.py`. This script permits to create a .py file containing content of CSV -> avoid
 using heavy python library to manage the CSV (pandas, ...). A priori, it is optimal way to do.
+
+### How to modify app icon ? 
+
+Modify file in [data/icon.ico](data/icon.ico).
 
 ### Useful links
 

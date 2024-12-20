@@ -7,8 +7,8 @@ from os.path import dirname, abspath, join
 
 # ENV PATH
 SRC_PATH = dirname(abspath(__file__))
-# <absolute_path>/40k-dice-stats-computing/src/
-ROOT_PATH = dirname(SRC_PATH)
+# <absolute_path>/40k-dice-stats-computing/src/common
+ROOT_PATH = dirname(dirname(SRC_PATH))
 # <absolute_path>/40k-dice-stats-computing/
 
 nb_figs=10
@@ -59,7 +59,7 @@ twin=False
 # If True: enable devastating wounds (critical wounds raises
 devastating_wounds=False
 
-# Ennemy
+# enemy
 # ---------------------------
 # Endurance of the enemy
 enemy_toughness=4
@@ -69,10 +69,10 @@ svg_enemy=3
 svg_invul_enemy=6
 # Feel no Pain (FNP) (4 means 4+, 7 means no FNP), default 7
 fnp_enemy=5
-# HP of the ennemy
-ennemy_hp = 3
+# HP of the enemy
+enemy_hp = 3
 
-# Datasheets of typical ennemy (marine, monster, tank, ...)
+# Datasheets of typical enemy (marine, monster, tank, ...)
 # ------------------------------------------
 # Path to the CSV to read
 OPPONENT_DATA_PATH = join(ROOT_PATH, "data", "enemy.csv")
