@@ -433,25 +433,28 @@ class Main(MDApp):
                             "average dead enemy": [0.] * len(self.enemy_names),  # [0, 0, ...]
                             "average HP lost": [0.] * len(self.enemy_names)}  # [0, 0, ...]
 
-        self.widget_table = self.init_data_table(result_dict=self.result_dict)
+        # todo: to rm
+        # self.widget_table = self.init_data_table(result_dict=self.result_dict)
 
-        # TODO: to be replaced by mdtext
-        layout = MDLabel(text='40k Dice stats',
-                                     font_style="H4",
-                                     halign="center",
+
+        self.field_stats_displayed = MDLabel(text=self.result_dict,
+                                     # font_style="H4",
+                                     # halign="center",
                                      size_hint_y=None,
                                      height=dp(20),  # top padding avoiding reduce text
                                      )
-        # Create a BoxLayout with left and right padding
-        layout = MDBoxLayout(size_hint_y=None,
-                             adaptive_height=True,
-                             # padding=(self.TABLE_COL_W, Window.width/12, self.TABLE_COL_W, 0),  # (left, top, right, bottom)
-                             padding=(Window.width / 15, Window.height / 24, Window.width / 15, 0),
-                             )
+        # todo: to rm
+        # # Create a BoxLayout with left and right padding
+        # layout = MDBoxLayout(size_hint_y=None,
+        #                      adaptive_height=True,
+        #                      # padding=(self.TABLE_COL_W, Window.width/12, self.TABLE_COL_W, 0),  # (left, top, right, bottom)
+        #                      padding=(Window.width / 15, Window.height / 24, Window.width / 15, 0),
+        #                      )
 
-        self.grid.add_widget(layout)
+        self.grid.add_widget(self.stats_displayed)
 
-        layout.add_widget(self.widget_table)
+        # todo: to rm
+        # layout.add_widget(self.widget_table)
 
         # Init var containing Dialog box
         self.dialog = None
@@ -710,6 +713,30 @@ class Main(MDApp):
         )
 
         return widget_table
+
+    def render_results(self):
+        """
+        Function to call when new results are computed (`compute`).
+        Update field `self.field_stats_displayed` based on `self.result_dict`
+        """
+        result_to_display = self.__table_to_tuples(self.result_dict)
+        # ex: [('marine', 0.0, 0.0), ...]
+
+        # 1/ Build text
+        # -----------------
+        # Element to display
+        message = ''
+
+        for name, average_enemy_lost, average_hp_lost in result_to_display:
+            message += f"{name}: "
+            # {"Name": self.enemy_names,
+            #                             "average dead enemy": [0.] * len(self.enemy_names),  # [0, 0, ...]
+            #                             "average HP lost": [0.] * len(self.enemy_names)}  # [0, 0, ...]
+
+
+
+        # 2/ Update field
+        self.field_stats_displayed.text = ...
 
     def update_widget_table(self, updated_dict: dict) -> None:
         """
