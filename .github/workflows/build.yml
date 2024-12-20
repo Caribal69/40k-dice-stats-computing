@@ -33,25 +33,25 @@ jobs:
           fi
         shell: bash
         # TODO: to debug
-#
-#      - name: Run tests with coverage
-#        run: pytest -v --cov=src test/ --log-cli-level=DEBUG
-#
-#      - name: Generate coverage badge
-#        run: coverage-badge -o coverage_badge.svg
-#
-#      - name: Commit and push coverage badge
-#        run: |
-#          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-#          git config --local user.name "github-actions[bot]"
-#          git add coverage_badge.svg
-#          git commit -m "Update coverage badge" || true
-#          git push
+        #
+        #      - name: Run tests with coverage
+        #        run: pytest -v --cov=src test/ --log-cli-level=DEBUG
+        #
+        #      - name: Generate coverage badge
+        #        run: coverage-badge -o coverage_badge.svg
+        #
+        #      - name: Commit and push coverage badge
+        #        run: |
+        #          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        #          git config --local user.name "github-actions[bot]"
+        #          git add coverage_badge.svg
+        #          git commit -m "Update coverage badge" || true
+        #          git push
 
       - name: Buildozer dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake
+          sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev automake # libtinfo5
           sudo apt-get update && sudo apt-get install -y python3-distutils autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev libmtdev1
           pip install --user --upgrade Cython virtualenv
           pip install --user --upgrade buildozer

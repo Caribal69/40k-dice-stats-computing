@@ -435,6 +435,13 @@ class Main(MDApp):
 
         self.widget_table = self.init_data_table(result_dict=self.result_dict)
 
+        # TODO: to be replaced by mdtext
+        layout = MDLabel(text='40k Dice stats',
+                                     font_style="H4",
+                                     halign="center",
+                                     size_hint_y=None,
+                                     height=dp(20),  # top padding avoiding reduce text
+                                     )
         # Create a BoxLayout with left and right padding
         layout = MDBoxLayout(size_hint_y=None,
                              adaptive_height=True,
