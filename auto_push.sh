@@ -5,6 +5,9 @@
 
 # 1/ compile CSV into .py
 # --------------------------
+# Activate python
+source .tox/dice_manager/Scripts/activate
+
 # Create `enemy.py` from data/enemy.csv > permits to avoid using pandas (heavy lib) to handle CSV
 cd src/common
 python build_enemy.py

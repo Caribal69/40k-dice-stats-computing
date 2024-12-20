@@ -11,7 +11,7 @@ from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton
+from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton, MDIconButton
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.gridlayout import MDGridLayout
@@ -21,6 +21,8 @@ from kivymd.uix.textfield import MDTextField
 from time import time
 from os.path import dirname, abspath, realpath
 from sys import path
+from kivy.animation import Animation
+from kivy.properties import BooleanProperty
 
 # Get the directory of the current file
 current_dir = dirname(abspath(__file__))
@@ -233,7 +235,25 @@ class Main(MDApp):
                                      size_hint_y=None,
                                      # height=dp(30),
                                      ))
-        # todo: sous forme de menu déroulant:
+
+        # Expand button (chevron up or vertical)
+        self.toggle_button = MDIconButton(
+            icon='chevron-right',
+            on_release=self.expand_menu
+        )
+
+        self.is_menu_expanded = BooleanProperty(False)
+        self.grid.add_widget(self.toggle_button)
+
+        # Field masked / expanded when clicking on chevron
+        self.field_expandable_menu = MDBoxLayout(
+            orientation='vertical',
+            size_hint_y=None,
+            height=0,
+            opacity=0
+        )
+        self.grid.add_widget(self.field_expandable_menu)
+
         self.sustain_hit = MDTextField(id='sh',
                                        text=self.DEFAULT_SUSTAIN_HIT,
                                        hint_text='Sustain (ex "D3+1")',
@@ -242,23 +262,25 @@ class Main(MDApp):
                                        required=True,
                                        on_text_validate=lambda x: self.compute()
                                        )
-        self.grid.add_widget(self.sustain_hit)
+        # self.grid.add_widget(self.sustain_hit)
+        self.field_expandable_menu.add_widget(self.sustain_hit)
         # todo: add anti vehicul, infantry, fly, ...
 
         # ------------------------------------------
         # Checkobxes (options)
         # ------------------------------------------
-        g2 = MDGridLayout(cols=2,
+        self.field_grid_checkboxes = MDGridLayout(cols=2,
                           size_hint_y=None,
                           spacing=self.SPACING,  # force vertical spacing between each elements
                           height=8 * Window.height / 10  # pre-define height to avoid overlap
                           )
 
-        self.grid.add_widget(g2)
+        # self.grid.add_widget(self.field_grid_checkboxes)
+        self.field_expandable_menu.add_widget(self.field_grid_checkboxes)
 
         # Re-roll the 1 at the hit dice
         # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None,
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None,
                               width=self.CHECKBOX_TEXT_W,
 
                               text='Re-roll hit 1'))
@@ -270,31 +292,31 @@ class Main(MDApp):
                                       on_release=lambda x: self._check_checkbox_rr_hit_ones_and_compute()
                                       )
 
-        g2.add_widget(self.rr_hit_ones)
+        self.field_grid_checkboxes.add_widget(self.rr_hit_ones)
 
         # Re-roll the 1 at the wound dice
         # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll wound 1'))
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll wound 1'))
         self.rr_wounds_one = MDCheckbox(id="rr_wounds_one",
                                         size_hint_x=None,
                                         width=Window.width/2,
                                         on_release=lambda x: self._check_checkbox_rr_one_wound_and_compute()
                                         )
-        g2.add_widget(self.rr_wounds_one)
+        self.field_grid_checkboxes.add_widget(self.rr_wounds_one)
 
         # Lethal hit
         # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Lethal hit'))
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Lethal hit'))
         self.field_lethal_hit = MDCheckbox(id="lethal_hit",
                                            size_hint_x=None,
                                            width=Window.width/2,
                                            on_release=lambda x: self.compute()
                                            )
-        g2.add_widget(self.field_lethal_hit)
+        self.field_grid_checkboxes.add_widget(self.field_lethal_hit)
 
         # Re-roll all the hit dice
         # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll hit all'))
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll hit all'))
 
         # Re-roll the 1 at the hit dice
         self.rr_hit_all = MDCheckbox(id="rr_hit_all",
@@ -303,37 +325,37 @@ class Main(MDApp):
                                      on_release=lambda x: self._check_checkbox_rr_hit_all_and_compute()
                                      )
 
-        g2.add_widget(self.rr_hit_all)
+        self.field_grid_checkboxes.add_widget(self.rr_hit_all)
 
         # Re-roll the all the wound dice
         # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Twin'))
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Twin'))
         self.rr_wound_all = MDCheckbox(id="rr_wound_all",
                                        size_hint_x=None,
                                        width=Window.width/2,
                                        on_release=lambda x: self._check_checkbox_rr_all_wound_and_compute()
                                        )
-        g2.add_widget(self.rr_wound_all)
+        self.field_grid_checkboxes.add_widget(self.rr_wound_all)
 
         # Torrent
         # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Torrent'))
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Torrent'))
         self.field_torrent = MDCheckbox(id="torrent",
                                         size_hint_x=None,
                                         width=Window.width/2,
                                         on_release=lambda x: self.compute()
                                         )
-        g2.add_widget(self.field_torrent)
+        self.field_grid_checkboxes.add_widget(self.field_torrent)
         #
         # # Devastating wound
         # # ------------------------------------------
-        g2.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Deva. wounds'))
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Deva. wounds'))
         self.field_deva_wound = MDCheckbox(id="deva_wound",
                                            size_hint_x=None,
                                            width=Window.width/2,
                                            on_release=lambda x: self.compute()
                                            )
-        g2.add_widget(self.field_deva_wound)
+        self.field_grid_checkboxes.add_widget(self.field_deva_wound)
 
         # ------------------------------------------
         # Custom enemy
@@ -712,6 +734,26 @@ class Main(MDApp):
         """
         # Into correct format (list of tuples)
         self.widget_table.row_data = self.__table_to_tuples(updated_dict)
+
+    # Manage menu
+    # ------------------------------------------------
+    def expand_menu(self, *args):
+        """
+        Function permitting to expand menu.
+        Usage of:
+         * `self.is_menu_expanded`: bool indicating if (case True) menu is exapanded
+         * `self.field_expandable_menu`: field containing all sub elements to expand.
+
+         By default, opacity = 0 (menu is nt expanded)
+        """
+        target_height = 0 if self.is_menu_expanded else self.field_expandable_menu.minimum_height
+        target_opacity = 0 if self.is_menu_expanded else 1
+        Animation(height=target_height,
+                  opacity=target_opacity,
+                  d=0.1,  # duration
+                  ).start(self.field_expandable_menu)
+        self.is_menu_expanded = not self.is_menu_expanded
+        self.toggle_button.icon = 'chevron-down' if self.is_menu_expanded else 'chevron-right'
 
     # All checks > unselect incompatible checkbox when selecting new one
     # ------------------------------------------------
