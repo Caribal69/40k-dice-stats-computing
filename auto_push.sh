@@ -61,10 +61,13 @@ sed -i "s/VERSION = .*/VERSION = $new_version/" "$VERSION_FILE"
 # Update the version in the buildozer.spec file and convert "version = " to lowercase
 sed -i "s/^version = .*/version = $new_version/" "$SPEC_FILE"
 sed -i 's/^VERSION = /version = /' "$SPEC_FILE"
-
+# Same in README.md (badge)
+sed -i "s|version-[0-9.]*-blue.svg|version-${new_version}-blue.svg|" README.md
 
 # 4/ Commit and push
 # --------------------------
 git add .
 git commit -m "$NEW_COMMIT_MESSAGE"
 git push
+
+deactivate

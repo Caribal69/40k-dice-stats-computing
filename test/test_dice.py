@@ -47,17 +47,24 @@ def test_proba_dice():
     assert proba_dice(dice_requested=6) == 1 / 6
 
 def test_proba_rr_ones():
+    assert pytest.approx(proba_rr_ones(dice_requested=6), 0.01) == 1/6 + (1/6) * (1/6)
+    assert pytest.approx(proba_rr_ones(dice_requested=5), 0.01) == 2/6 + (1/6) * (2/6)
+    assert pytest.approx(proba_rr_ones(dice_requested=4), 0.01) == 3/6 + (1/6) * (3/6)
     assert pytest.approx(proba_rr_ones(dice_requested=3), 0.01) == 4/6 + (1/6) * (4/6)
     assert pytest.approx(proba_rr_ones(dice_requested=2), 0.01) == 5/6 + (1/6) * (5/6)
 
 def test_proba_rr_all():
+    assert pytest.approx(proba_rr_all(dice_requested=2), 0.01) == 5 / 6 * (1/6)*5/6
     assert pytest.approx(proba_rr_all(dice_requested=3), 0.01) == 8 / 9
     assert pytest.approx(proba_rr_all(dice_requested=4), 0.01) == 3 / 4
+    assert pytest.approx(proba_rr_all(dice_requested=5), 0.01) == 1/2 * (1/2 * 1/3)
     assert pytest.approx(proba_rr_all(dice_requested=6), 0.01) == 1/6 + (5/6 * 1/6)
 
 def test_add_sustain_hit():
     assert add_sustain_hit(2, 1) == 2  # 2
     assert add_sustain_hit(2, 4) == 1
+    assert add_sustain_hit(2, 6) == 2*1/6
+    assert add_sustain_hit(1, 5) == 1*2/6
 
 def test_get_wound_threshold():
     assert get_wound_threshold(weapon_s=2, enemy_toughness=1) == 2  # s = 2* T

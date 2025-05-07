@@ -12,6 +12,8 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 
 ![coverage](coverage_badge.svg)
 
+![version](https://img.shields.io/badge/version-0.20-blue.svg)
+
 
 ## Table of Contents
 1. [Presentation of the app]( #presentation-of-the-app)
@@ -139,5 +141,5 @@ On your mobile phone, go to the github page of the project:
 * File [.github/workflows/build.yml](.github/workflows/buildozer.yml): contains commands to build the app on github 
 plateform (launched when new code is push). See github documentation [here](https://github.com/ArtemSBulgakov/buildozer-action)
 * File [buildozer.spec](buildozer.spec): File containing command to launch on github servers when code is push. Note that version is automatically filled via `auto_push.sh` script.
-(see details [here](https://github.com/ArtemSBulgakov/buildozer-action/tree/master)
+(see details [here](https://github.com/ArtemSBulgakov/buildozer-action/tree/master))
 * Script [auto_push.sh](auto_push.sh): script permitting to update version, commit and push. One single argument: ypur commit message (else, if no argument, automatically produce a commit message)
