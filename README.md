@@ -25,6 +25,7 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 3. [Elements for developers](#Elements-for-developers)
    - [How to install (developers)](#How-to-install-developers)
    - [How to commit and push (developers)](#How-to-commit-and-push)
+   - [How to compute code coverage](#how-to-compute-code-coverage-developers)
    - [How to access the app](#How-to-access-the-app) 
    - [Architecture of dirs](#Architecture-of-dirs)
 
@@ -110,6 +111,13 @@ Action performed:
 >>>source auto_push.sh "my commit message"
 # will commit and push your custom message
 ```
+
+### How to compute code coverage [developers]
+
+1. Activate env (`tox` on a terminal)
+2. `pytest -v --cov=src test/ --cov-report=term-missing --log-cli-level=DEBUG`
+ * Column `Missing` point out all lines not reached during tests.
+
 
 ### How to access the app 
 

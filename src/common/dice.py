@@ -4,7 +4,6 @@ A set of utils functions to compute probability, parse expressions, ...
 Terminology:
 * function starting with `proba`: compute a probability (0 < proba < 1)
 * function starting with `add`: result to be added to a `proba` function
-
 """
 from dataclasses import dataclass
 from typing import Union
@@ -44,7 +43,6 @@ def parse_expression(dice_expression: Union[str, int]) -> float:
         r = int(dice_expression)  # ex: 3
 
     except ValueError:
-
         # b) parse (if dice_expression = "ND6+X", or "ND3+X")
         if (type(dice_expression) == str) and "D" in dice_expression:  # ex: A = 2D3
 
@@ -165,7 +163,7 @@ def proba_rr_all(dice_requested:int) -> float:
     :return: Probability of success (0<= float <= 1)
     """
     proba = proba_dice(dice_requested)
-    return proba + proba*proba_dice(dice_requested, succeed=False)
+    return proba + proba * proba_dice(dice_requested, succeed=False)
 
 # additional proba if sustain hit (to be added to proba)
 def add_sustain_hit(sustain: float, crit: int=6) -> float:
@@ -237,7 +235,3 @@ def compute_average_hp_lost(enemy_dead: float, remaining_hp: float, enemy_hp: in
     :return: Average number of HP lost in the enemy squad.
     """
     return round(enemy_dead*enemy_hp + (enemy_hp-remaining_hp), 2)
-
-if __name__ == "__main__":
-    parse_expression("2D6") # DiceExpression(nb_dice=2, dice_face=6, bonus=0)
-    parse_expression("1D3+9")  # DiceExpression(nb_dice=1, dice_face=3, bonus=9)

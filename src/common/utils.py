@@ -24,8 +24,8 @@ crit=6
 
 # Weapon
 # ---------------------------
-# Number of attack of the weapon
-weapon_a="D3+1"
+# Number of attack of the weapon. Int, can be str (like "D3+1")
+weapon_a=1
 # Set the hit capacity
 hit_threshold=3
 # Strenght of the weapon
@@ -48,8 +48,8 @@ rr_hit_ones=False
 # If True, re-roll all failed hit
 rr_hit_all=False
 # Set the sustain hit of the weapon (0 means no sustain hit)
-# Can be a str (ex: D3)
-sustain_hit="D3"
+# Int or str (ex: "D3")
+sustain_hit=0
 # lethal hit: if True: enable lethal hit
 lethal_hit=False
 # If True, re-roll the one during wound launch.
@@ -58,6 +58,8 @@ rr_wounds_ones=False
 twin=False
 # If True: enable devastating wounds (critical wounds raises
 devastating_wounds=False
+# If True (and if possible), rr all non critical hits (to fish sustain / lethal if enabled) or deva wound (if enabled)
+fish = False
 
 # enemy
 # ---------------------------

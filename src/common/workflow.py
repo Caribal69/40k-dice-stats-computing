@@ -26,7 +26,7 @@ from common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit
     get_wound_threshold, parse_expression, proba_crit
 from common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
                        rr_hit_ones, rr_hit_all, sustain_hit, lethal_hit, rr_wounds_ones, twin, devastating_wounds,
-                       enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, enemy_hp, VERBOSE)
+                       enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, enemy_hp, VERBOSE, fish)
 
 
 def launch_workflow(nb_figs: int = nb_figs,
@@ -45,6 +45,7 @@ def launch_workflow(nb_figs: int = nb_figs,
                     rr_wounds_ones:bool=rr_wounds_ones,
                     twin:bool=twin,
                     devastating_wounds:bool=devastating_wounds,
+                    fish: bool = fish,
                     enemy_toughness:int=enemy_toughness,
                     svg_enemy:int=svg_enemy,
                     svg_invul_enemy:int=svg_invul_enemy,
@@ -70,6 +71,9 @@ def launch_workflow(nb_figs: int = nb_figs,
     :param rr_wounds_ones: If True, re-roll the one during wound launch.
     :param twin: If True, reroll all failed wounds
     :param devastating_wounds: If True: enable devastating wounds (critical wounds raises mortal wounds)
+    :param fish: If True, re-roll all dices except critical to enable lethal (if lethal), sustain (if sustain) or deva
+    wound (if deva). Default False. Note that set to False if not possible to reroll dices (hits for lethal / sustain
+    or wounds for deva).
     :param enemy_toughness: Endurance of the enemy
     :param svg_enemy: Save of the enemy (4 means 4+, 7 means no save)
     :param svg_invul_enemy: Invulnerable save of the enemy (4 means 4+, 7 means no save)
@@ -115,10 +119,23 @@ def launch_workflow(nb_figs: int = nb_figs,
     if not devastating_wounds:
         re_roll_non_devastating_wound = False
 
-    sustain_hit_bonus = 0
-    if sustain_hit != 0:
-        sustain_hit_bonus = add_sustain_hit(sustain=parse_expression(sustain_hit), crit=crit)
-        if verbose: print(f"[DEBUG]: sustain_hit {sustain_hit}, average bonus: {sustain_hit_bonus}")
+    # Fishing (re-roll dices to search more criticals, to proc more deva / sustain / lethal)
+    # ------------------------------
+    fish_hits = False
+    fish_wounds = False
+
+    if fish:
+        # Case re-roll hits: if impossible to re-roll OR no sustain neither lethal hit allowed
+        if not (rr_hit_all or ((str(sustain_hit) != "0") and (not lethal_hit))):
+            if verbose: print(f"[DEBUG]: Impossible to fish hits. One condition not respected between rr_hit ({rr_hit_all}), sustain ({sustain_hit}), lethal ({lethal_hit})")
+        else:
+            fish_hits = True
+        # Case re-roll wounds: if impossible to rr wounds OR no deva wounds
+        if not (twin or devastating_wounds):
+            if verbose: print(
+                f"[DEBUG]: Impossible to fish wounds. One condition not respected between rr_wounds ({twin}), deva wounds ({devastating_wounds})")
+        else:
+            fish_wounds = True
 
     # 0.2/ Init
     # ------------------------------------------------------------------------------
@@ -168,24 +185,58 @@ def launch_workflow(nb_figs: int = nb_figs,
         if verbose: print("[DEBUG] Re-roll hit one")
         proba_hit = proba_rr_ones(hit_threshold)
 
-    # If requested, re-roll all dices < the touch threshold
-    elif rr_hit_all:
+    # If requested, re-roll all dices < the hit threshold
+    elif rr_hit_all and (not fish_hits):
         if verbose: print("[DEBUG] Re-roll hit all")
         proba_hit = proba_rr_all(hit_threshold)
 
     else:
         proba_hit = proba_dice(dice_requested=hit_threshold)
 
-    average_hit = proba_hit * nb_attack + sustain_hit_bonus * nb_attack
-    if verbose: print(f"[DEBUG] At this stage, hit average: {average_hit}")
+    # 2.1/ FISH (special case)
+    # ------------------------------
+    nb_crit = proba_crit(crit=crit) * nb_attack
 
+
+    if rr_hit_all and fish_hits:
+        if verbose: print("[DEBUG] Fishing hits")
+        # ROLL 1:
+        # Re-roll all dices (`nb_attack`) except critical
+        nb_non_critical_launch = nb_attack - nb_crit
+
+        # ROLL 2:
+        nb_crit += proba_crit(crit=crit) * nb_non_critical_launch
+        nb_non_critical_launch = nb_attack - nb_crit  # make sure correct nb of crit removed from attack
+
+        # REMAINING succeeded dices (lethal hits already droped)
+        average_hit = proba_dice(dice_requested=hit_threshold) * nb_non_critical_launch
+    else:
+        average_hit = proba_hit * nb_attack
+
+    # 2.2/ SUSTAIN
+    # -------------------------
+    sustain_additional_hit = 0
+    if sustain_hit != 0:
+        # Get the (eventually fished) sustain hits
+        sustain_additional_hit = parse_expression(sustain_hit) * nb_crit
+
+    # Add average nb of sustain
+    average_hit += sustain_additional_hit
+
+    # 2.3/ LETHAL
+    # -------------------------
     # get lethal hit
     nb_lethal_hits = 0
     if lethal_hit:
-        if verbose: print(f"[DEBUG] Compute lethal hit")
-        nb_lethal_hits = proba_crit(crit=crit) * nb_attack
-    # remove lethal hits (do not count twice)
-    average_hit = average_hit - nb_lethal_hits
+        nb_lethal_hits = nb_crit
+        if verbose: print(f"[DEBUG] Get {nb_lethal_hits} lethal hit")
+
+    if not fish_hits:
+        # remove lethal hits (do not count twice)
+        average_hit = average_hit - nb_lethal_hits
+        # already done if fish_hits = True
+    if verbose: print(
+        f"[DEBUG] At this stage, hit average: {average_hit}, including {sustain_additional_hit} hits comming from sustain hit")
 
     # ------------------------------------------------------------------------------
     # 3/ Wounds
@@ -195,24 +246,41 @@ def launch_workflow(nb_figs: int = nb_figs,
         if verbose: print("[DEBUG] Re-roll wounds one")
         proba_w = proba_rr_ones(wounds_threshold)
 
-    elif twin:
+    elif twin and not fish_wounds:
         if verbose: print("[DEBUG] Re-roll wounds all")
         proba_w = proba_rr_all(wounds_threshold)
 
     else:
         proba_w = proba_dice(dice_requested=wounds_threshold)
 
-    # Success wounds
-    average_wounds = nb_lethal_hits + average_hit * proba_w
+    nb_crit = proba_crit(crit=crit) * average_hit
+
+    if (twin and fish_wounds and devastating_wounds):
+        if verbose: print("[DEBUG] Fishing wounds")
+        # Re-roll all dices (`average_hit`) except critical
+        nb_non_critical_launch = average_hit - nb_crit
+
+        # ROLL 2:
+        nb_crit += proba_crit(crit=crit) * nb_non_critical_launch
+        nb_non_critical_launch = average_hit - nb_crit  # make sure correct nb of crit removed from attack
+
+        # REMAINING succeeded dices (deva wounds already droped)
+        average_wounds = nb_lethal_hits + nb_non_critical_launch * proba_w
+    else:
+        # Success wounds
+        average_wounds = nb_lethal_hits + average_hit * proba_w
 
     # get devastating wound
     nb_deva_w = 0
 
     if devastating_wounds:
-        if verbose: print(f"[DEBUG] Compute devastating wounds")
-        nb_deva_w = proba_crit(crit=crit) * average_hit
-    # remove lethal hits (do not count twice)
-    average_wounds = average_wounds - nb_deva_w
+        nb_deva_w = nb_crit
+        if verbose: print(f"[DEBUG] Get {nb_deva_w} devastating wounds")
+
+    if not fish_wounds:
+        # remove devastating wounds from succeeded wounds (do not count twice)
+        average_wounds = average_wounds - nb_deva_w
+        # already done if fish_wounds = True
 
     if verbose: print(
         f"[DEBUG] At this stage, wounds average: {average_wounds}, including {nb_lethal_hits} lethal hits, and {nb_deva_w} devastating wounds")
@@ -263,7 +331,7 @@ def launch_workflow(nb_figs: int = nb_figs,
     # As it is a float (<1), loop is not possible
     remaining_hp -= remaining_failed_saves * proba_fnp_failed
 
-    # Get sure to avoid imbecil results (e.g. remaining_failed_saves=0.99 > certainly more deads if sufficient damage)
+    # Get sure to avoid dumb results (e.g. remaining_failed_saves=0.99 > certainly more deads if sufficient damage)
     if remaining_hp < 0:
         remaining_hp = 0
         enemy_dead += 1
