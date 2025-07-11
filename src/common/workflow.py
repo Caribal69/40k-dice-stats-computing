@@ -24,13 +24,14 @@ sys.path.append(ROOT_PATH)
 # Assuming app is already working on src (see `buildozer.spec[source.dir]`) : else app bug
 from common.dice import proba_dice, proba_rr_ones, proba_rr_all, add_sustain_hit, \
     get_wound_threshold, parse_expression, proba_crit
-from common.utils import (nb_figs, crit, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
+from common.utils import (nb_figs, crit, crit_wounds, weapon_a, hit_threshold, weapon_s, weapon_ap, weapon_d, bonus_wound, torrent,
                        rr_hit_ones, rr_hit_all, sustain_hit, lethal_hit, rr_wounds_ones, twin, devastating_wounds,
                        enemy_toughness, svg_enemy, svg_invul_enemy, fnp_enemy, enemy_hp, VERBOSE, fish)
 
 
 def launch_workflow(nb_figs: int = nb_figs,
                     crit:int=crit,
+                    crit_wounds: int = crit_wounds,
                     weapon_a:Union[str, int]=weapon_a,
                     hit_threshold:int=hit_threshold,
                     weapon_s:int=weapon_s,
@@ -57,6 +58,7 @@ def launch_workflow(nb_figs: int = nb_figs,
 
     :param nb_figs: Number of figurines attacking
     :param crit: Value of dice to get a critical (6 means crit at 6+)
+    :param crit_wounds: Idem for wound roll
     :param weapon_a: Number of attackk of the weapon (ex: "2D6+1" or 3)
     :param hit_threshold: Hit capacity (3 means 3+)
     :param weapon_s: Weapon strenght
@@ -131,7 +133,7 @@ def launch_workflow(nb_figs: int = nb_figs,
         else:
             fish_hits = True
         # Case re-roll wounds: if impossible to rr wounds OR no deva wounds
-        if not (twin or devastating_wounds):
+        if not (twin and devastating_wounds):
             if verbose: print(
                 f"[DEBUG]: Impossible to fish wounds. One condition not respected between rr_wounds ({twin}), deva wounds ({devastating_wounds})")
         else:
@@ -150,7 +152,7 @@ def launch_workflow(nb_figs: int = nb_figs,
     # Take into account crits (A critical hit/wound is always a hit/wound)
     # ------------------------------------------------------------------------------
     # A critical wound is always a wound
-    wounds_threshold = min(crit, wounds_threshold)
+    wounds_threshold = min(crit_wounds, wounds_threshold)
 
     # A critical hit is always a hit
     hit_threshold = min(crit, hit_threshold)
@@ -253,7 +255,7 @@ def launch_workflow(nb_figs: int = nb_figs,
     else:
         proba_w = proba_dice(dice_requested=wounds_threshold)
 
-    nb_crit = proba_crit(crit=crit) * average_hit
+    nb_crit = proba_crit(crit=crit_wounds) * average_hit
 
     if (twin and fish_wounds and devastating_wounds):
         if verbose: print("[DEBUG] Fishing wounds")
@@ -261,7 +263,7 @@ def launch_workflow(nb_figs: int = nb_figs,
         nb_non_critical_launch = average_hit - nb_crit
 
         # ROLL 2:
-        nb_crit += proba_crit(crit=crit) * nb_non_critical_launch
+        nb_crit += proba_crit(crit=crit_wounds) * nb_non_critical_launch
         nb_non_critical_launch = average_hit - nb_crit  # make sure correct nb of crit removed from attack
 
         # REMAINING succeeded dices (deva wounds already droped)
@@ -293,7 +295,8 @@ def launch_workflow(nb_figs: int = nb_figs,
 
     failed_svg = average_wounds * proba_failed_svg + nb_deva_w
 
-    if verbose: print(f"[DEBUG] At this stage, average saves failed: {failed_svg}")
+    if verbose: print(f"[DEBUG] At this stage, average saves failed (without deva w.): {average_wounds * proba_failed_svg}")
+    if verbose: print(f"[DEBUG] Average saves failed including deva wounds ({nb_deva_w:.2f}): {failed_svg}")
 
     # ------------------------------------------------------------------------------
     # 5/ Feel no pain and deads

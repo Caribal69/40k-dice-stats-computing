@@ -338,7 +338,7 @@ def test_fish_wound_impossible():
                         )
 
     # Test fish wound impossible (deva but no rr wound)
-    compare_to_expected(expected=10 * 0.5 * ((0.5 - 1/6) * 0.5 + 1/6),
+    compare_to_expected(expected=10 * 0.5 * (2/6 * 0.5 + 1/6), # 10 * 0.5 * ((0.5 - 1/6) * 0.5 + 1/6),
                         crit=6,
                         fish=True,
                         twin=False,
@@ -347,7 +347,7 @@ def test_fish_wound_impossible():
 
 def test_fish_deva_wounds():
     """
-    Test fishing devastating wounds when crit at 6+ or 5+
+    Test fishing devastating wounds when crit at 6+ or 5+ (crit is for HIT only, not wound)
     """
     # 10 attacks, 4+ hit, 4+ wound, 4+ save (AP=0) deva wound
 
@@ -360,7 +360,6 @@ def test_fish_deva_wounds():
                         )
 
     # Crit 5+
-    nb_deva = (2/6 + (1 - 2/6) * 2/6)
     compare_to_expected(expected=10*0.5*( (1-nb_deva) * 0.5 * 0.5 + nb_deva),
                         crit=5,
                         fish=True,
@@ -485,7 +484,7 @@ def test_fish_all():
                         devastating_wounds=True,
                         )
 
-    # crit 5+
+    # crit 5+ (wound AND hit)
     # --------
     nb_deva = (2 / 6 + (1 - 2 / 6) * 2 / 6)
     nb_lethal = (2 / 6 + (1 - 2 / 6) * 2 / 6)
@@ -494,6 +493,7 @@ def test_fish_all():
     # lethal hit + deva wound
     compare_to_expected(expected=10 * 0.5 * (1-nb_lethal) * ( (1-nb_deva)*0.5*0.5 + nb_deva) + 10 * nb_lethal * 0.5,
                         crit=5,
+                        crit_wounds=5,
                         fish=True,
                         rr_hit_all=True,
                         twin=True,
@@ -504,6 +504,7 @@ def test_fish_all():
     # sustain hit + deva wound
     compare_to_expected(expected=10 * 0.5 * (1 + nb_sustain) * ( (1 - nb_deva) * 0.5 * 0.5 + nb_deva),
                         crit=5,
+                        crit_wounds=5,
                         fish=True,
                         rr_hit_all=True,
                         twin=True,
@@ -514,6 +515,7 @@ def test_fish_all():
     # lethal hit + sustain hit + deva wound
     compare_to_expected(expected=10 * ( (((1 - nb_lethal) * 0.5 * (1 - nb_deva)) + nb_sustain) * 0.5 * 0.5) + 10 * 0.5 * (1+nb_sustain) * nb_deva + 10 * nb_lethal * 0.5,
                         crit=5,
+                        crit_wounds=5,
                         fish=True,
                         rr_hit_all=True,
                         twin=True,
@@ -522,6 +524,56 @@ def test_fish_all():
                         devastating_wounds=True,
                         )
 
+def test_fish_crit_hit_not_wound():
+    """
+    Test fishing:
+    * lethal + deva (we consider the two are fished: hit + wounds)
+    * sustain + deva
+    * lethal + sustain + deva
+
+    When critical hit = 5+ and critical w = 6+
+    """
+    # crit 5+ HIT
+    # --------
+    nb_lethal = (2 / 6 + (1 - 2 / 6) * 2 / 6)
+    nb_sustain = (2 / 6 + (1 - 2 / 6) * 2 / 6)
+
+    # crit 6+ wound
+    nb_deva = (1 / 6 + (1 - 1 / 6) * 1 / 6)
+
+    # lethal hit + deva wound
+    compare_to_expected(expected=10 * 0.5 * (1-nb_lethal) * ( (1-nb_deva)*0.5*0.5 + nb_deva) + 10 * nb_lethal * 0.5,
+                        crit=5,
+                        crit_wounds=6,
+                        fish=True,
+                        rr_hit_all=True,
+                        twin=True,
+                        lethal_hit=True,
+                        sustain_hit=0,
+                        devastating_wounds=True,
+                        )
+    # sustain hit + deva wound
+    compare_to_expected(expected=10 * 0.5 * (1 + nb_sustain) * ( (1 - nb_deva) * 0.5 * 0.5 + nb_deva),
+                        crit=5,
+                        crit_wounds=6,
+                        fish=True,
+                        rr_hit_all=True,
+                        twin=True,
+                        lethal_hit=False,
+                        sustain_hit=1,
+                        devastating_wounds=True,
+                        )
+    # lethal hit + sustain hit + deva wound
+    compare_to_expected(expected=10 * ( (((1 - nb_lethal) * 0.5 * (1 - nb_deva)) + nb_sustain) * 0.5 * 0.5) + 10 * 0.5 * (1+nb_sustain) * nb_deva + 10 * nb_lethal * 0.5,
+                        crit=5,
+                        crit_wounds=6,
+                        fish=True,
+                        rr_hit_all=True,
+                        twin=True,
+                        lethal_hit=True,
+                        sustain_hit=1,
+                        devastating_wounds=True,
+                        )
 
 
 

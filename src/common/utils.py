@@ -19,8 +19,11 @@ VERBOSE = True
 # NB: if True: twin set to False.
 # re_roll_non_devastating_wound=True
 
-# Set the value of the critical (5 mean 5+, default 6+)
+# Set the value of the critical (5 mean 5+, default 6+) for HIT
 crit=6
+
+# Set the value of critical for WOUNDS
+crit_wounds=6
 
 # Weapon
 # ---------------------------
