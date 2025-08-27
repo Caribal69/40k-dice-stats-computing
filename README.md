@@ -12,7 +12,7 @@ This code is a Python toolset for WH40k dice statistical computation. This code 
 
 ![coverage](coverage_badge.svg)
 
-![version](https://img.shields.io/badge/version-0.24-blue.svg)
+![version](https://img.shields.io/badge/version-0.25-blue.svg)
 
 
 ## Table of Contents
