@@ -55,7 +55,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y autoconf automake autopoint build-essential ccache cmake gettext git libffi-dev libltdl-dev libssl-dev liblzma-dev libtool openjdk-8-jdk patch pkg-config python3-pip python3-setuptools sudo unzip zip zlib1g-dev libmtdev1
           # sudo apt-get install -y python3-distutils
           pip install --user --upgrade virtualenv
-        # Use an ol version of Cython  
+          # Use an old version of Cython
           pip install --user Cython == 0.9.x
           pip install --user --upgrade buildozer
           echo 'export PATH=$PATH:~/.local/bin/' >> ~/.bashrc
