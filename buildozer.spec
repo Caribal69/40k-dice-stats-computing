@@ -8,7 +8,7 @@ package.domain = org.test.appname
 source.dir = src
 source.include_exts = py
 
-version = 0.25
+version = 0.26
 requirements = python3,kivy,kivymd
 
 # (str) python-for-android branch to use, defaults to master
