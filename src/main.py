@@ -42,8 +42,8 @@ from common.dice import compute_average_enemy_dead, compute_average_hp_lost, Dic
 from common.utils import ROOT_PATH
 from os.path import join
 
-class Main(MDApp):
 
+class Main(MDApp):
     # ICON PATH
     icon = join(ROOT_PATH, "data", "icon.ico")
 
@@ -97,12 +97,14 @@ class Main(MDApp):
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Orange"
 
+        # TODO: here, check for updates and update app if any.
+
         # Main screen
         self.screen = ScrollView(
-                                size_hint = (1, 1), # full size screen
-                                # size_hint=(1, None),  # scroll only for y
-                                 size=(Window.width, Window.height),
-                                 )
+            size_hint=(1, 1),  # full size screen
+            # size_hint=(1, None),  # scroll only for y
+            size=(Window.width, Window.height),
+        )
 
         # Grids permits to get thinks one by one
         self.grid = MDBoxLayout(orientation="vertical",
@@ -135,7 +137,7 @@ class Main(MDApp):
                                          text=self.DEFAULT_NB_FIGS,
                                          hint_text='Nb figurines',
                                          size_hint_x=None,
-                                         width=Window.width/3,
+                                         width=Window.width / 3,
                                          icon_right="account-multiple",
                                          size_hint_y=None,
                                          # height=dp(20),
@@ -150,13 +152,13 @@ class Main(MDApp):
         g1 = MDGridLayout(rows=2,
                           size_hint_y=None,
                           height=2 * Window.height / 10  # pre-define height to avoid overlap
-                        )
+                          )
         # Nb attack
         self.field_a = MDTextField(id='A',
                                    text=self.DEFAULT_A,
                                    hint_text='A',
                                    size_hint_x=None,
-                                   width=Window.width/4,
+                                   width=Window.width / 4,
                                    icon_right="ammunition",
                                    required=True,
                                    on_text_validate=lambda x: self.compute()
@@ -168,7 +170,7 @@ class Main(MDApp):
                                     text=self.DEFAULT_BS,
                                     hint_text='CT',
                                     size_hint_x=None,
-                                    width=Window.width/4,
+                                    width=Window.width / 4,
                                     icon_right="adjust",
                                     required=True,
                                     on_release=lambda x: self.compute()
@@ -180,7 +182,7 @@ class Main(MDApp):
                                    hint_text='S',
                                    text=self.DEFAULT_S,
                                    size_hint_x=None,
-                                   width=Window.width/4,
+                                   width=Window.width / 4,
                                    icon_right="arm-flex",
                                    required=True,
                                    on_release=lambda x: self.compute()
@@ -192,7 +194,7 @@ class Main(MDApp):
                                     hint_text='AP',
                                     text=self.DEFAULT_AP,
                                     size_hint_x=None,
-                                    width=Window.width/4,
+                                    width=Window.width / 4,
                                     icon_right="shield-alert",
                                     required=True,
                                     on_release=lambda x: self.compute()
@@ -204,7 +206,7 @@ class Main(MDApp):
                                      text=self.DEFAULT_D,
                                      hint_text='D',
                                      size_hint_x=None,
-                                     width=Window.width/4,
+                                     width=Window.width / 4,
                                      icon_right="decagram",
                                      required=True,
                                      on_release=lambda x: self.compute()
@@ -216,7 +218,7 @@ class Main(MDApp):
                                        text=self.DEFAULT_CRIT,
                                        hint_text='crit',
                                        size_hint_x=None,
-                                       width=Window.width/4,
+                                       width=Window.width / 4,
                                        icon_right="creation",
                                        required=True,
                                        on_release=lambda x: self.compute()
@@ -258,7 +260,7 @@ class Main(MDApp):
                                        text=self.DEFAULT_SUSTAIN_HIT,
                                        hint_text='Sustain (ex "D3+1")',
                                        size_hint_x=None,
-                                       width=Window.width/3,
+                                       width=Window.width / 3,
                                        required=True,
                                        on_text_validate=lambda x: self.compute()
                                        )
@@ -270,10 +272,10 @@ class Main(MDApp):
         # Checkobxes (options)
         # ------------------------------------------
         self.field_grid_checkboxes = MDGridLayout(cols=2,
-                          size_hint_y=None,
-                          spacing=self.SPACING,  # force vertical spacing between each elements
-                          height=8 * Window.height / 10  # pre-define height to avoid overlap
-                          )
+                                                  size_hint_y=None,
+                                                  spacing=self.SPACING,  # force vertical spacing between each elements
+                                                  height=8 * Window.height / 10  # pre-define height to avoid overlap
+                                                  )
 
         # self.grid.add_widget(self.field_grid_checkboxes)
         self.field_expandable_menu.add_widget(self.field_grid_checkboxes)
@@ -281,14 +283,14 @@ class Main(MDApp):
         # Re-roll the 1 at the hit dice
         # ------------------------------------------
         self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None,
-                              width=self.CHECKBOX_TEXT_W,
+                                                      width=self.CHECKBOX_TEXT_W,
 
-                              text='Re-roll hit 1'))
+                                                      text='Re-roll hit 1'))
 
         # Re-roll the 1 at the hit dice
         self.rr_hit_ones = MDCheckbox(id="rr_hit_ones",
                                       size_hint_x=None,
-                                      width=Window.width/2,
+                                      width=Window.width / 2,
                                       on_release=lambda x: self._check_checkbox_rr_hit_ones_and_compute()
                                       )
 
@@ -296,10 +298,11 @@ class Main(MDApp):
 
         # Re-roll the 1 at the wound dice
         # ------------------------------------------
-        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll wound 1'))
+        self.field_grid_checkboxes.add_widget(
+            MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll wound 1'))
         self.rr_wounds_one = MDCheckbox(id="rr_wounds_one",
                                         size_hint_x=None,
-                                        width=Window.width/2,
+                                        width=Window.width / 2,
                                         on_release=lambda x: self._check_checkbox_rr_one_wound_and_compute()
                                         )
         self.field_grid_checkboxes.add_widget(self.rr_wounds_one)
@@ -309,19 +312,20 @@ class Main(MDApp):
         self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Lethal hit'))
         self.field_lethal_hit = MDCheckbox(id="lethal_hit",
                                            size_hint_x=None,
-                                           width=Window.width/2,
+                                           width=Window.width / 2,
                                            on_release=lambda x: self.compute()
                                            )
         self.field_grid_checkboxes.add_widget(self.field_lethal_hit)
 
         # Re-roll all the hit dice
         # ------------------------------------------
-        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll hit all'))
+        self.field_grid_checkboxes.add_widget(
+            MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Re-roll hit all'))
 
         # Re-roll the 1 at the hit dice
         self.rr_hit_all = MDCheckbox(id="rr_hit_all",
                                      size_hint_x=None,
-                                     width=Window.width/2,
+                                     width=Window.width / 2,
                                      on_release=lambda x: self._check_checkbox_rr_hit_all_and_compute()
                                      )
 
@@ -332,7 +336,7 @@ class Main(MDApp):
         self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Twin'))
         self.rr_wound_all = MDCheckbox(id="rr_wound_all",
                                        size_hint_x=None,
-                                       width=Window.width/2,
+                                       width=Window.width / 2,
                                        on_release=lambda x: self._check_checkbox_rr_all_wound_and_compute()
                                        )
         self.field_grid_checkboxes.add_widget(self.rr_wound_all)
@@ -342,20 +346,41 @@ class Main(MDApp):
         self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Torrent'))
         self.field_torrent = MDCheckbox(id="torrent",
                                         size_hint_x=None,
-                                        width=Window.width/2,
+                                        width=Window.width / 2,
                                         on_release=lambda x: self.compute()
                                         )
         self.field_grid_checkboxes.add_widget(self.field_torrent)
-        #
-        # # Devastating wound
-        # # ------------------------------------------
-        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Deva. wounds'))
+
+        # Devastating wound
+        # ------------------------------------------
+        self.field_grid_checkboxes.add_widget(
+            MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Deva. wounds'))
         self.field_deva_wound = MDCheckbox(id="deva_wound",
                                            size_hint_x=None,
-                                           width=Window.width/2,
+                                           width=Window.width / 2,
                                            on_release=lambda x: self.compute()
                                            )
         self.field_grid_checkboxes.add_widget(self.field_deva_wound)
+
+        # Fish hit
+        # ------------------------------------------
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Fish hit'))
+        self.field_fish_hit = MDCheckbox(id="fish_hit",
+                                         size_hint_x=None,
+                                         width=Window.width / 2,
+                                         on_release=lambda x: self._check_checkbox_fish_hit_and_compute()
+                                         )
+        self.field_grid_checkboxes.add_widget(self.field_fish_hit)
+
+        # Fish w
+        # ------------------------------------------
+        self.field_grid_checkboxes.add_widget(MDLabel(size_hint_x=None, width=self.CHECKBOX_TEXT_W, text='Fish wound'))
+        self.field_fish_w = MDCheckbox(id="fish_w",
+                                       size_hint_x=None,
+                                       width=Window.width / 2,
+                                       on_release=lambda x: self._check_checkbox_fish_wound_and_compute()
+                                       )
+        self.field_grid_checkboxes.add_widget(self.field_fish_w)
 
         # ------------------------------------------
         # Custom enemy
@@ -374,50 +399,50 @@ class Main(MDApp):
                           )
         # HP
         self.field_hp = MDTextField(id='HP',
-                                   text=self.DEFAULT_HP,
-                                   hint_text='HP',
-                                   size_hint_x=None,
-                                   width=Window.width / 4,
-                                   icon_right="account-heart",
-                                   required=True,
-                                   on_text_validate=lambda x: self.compute()
-                                   )
+                                    text=self.DEFAULT_HP,
+                                    hint_text='HP',
+                                    size_hint_x=None,
+                                    width=Window.width / 4,
+                                    icon_right="account-heart",
+                                    required=True,
+                                    on_text_validate=lambda x: self.compute()
+                                    )
         g3.add_widget(self.field_hp)
 
         # T
         self.field_t = MDTextField(id='T',
-                                    text=self.DEFAULT_T,
-                                    hint_text='T',
-                                    size_hint_x=None,
-                                    width=Window.width / 4,
-                                     icon_right="anvil",
-                                    required=True,
-                                    on_release=lambda x: self.compute()
-                                    )
+                                   text=self.DEFAULT_T,
+                                   hint_text='T',
+                                   size_hint_x=None,
+                                   width=Window.width / 4,
+                                   icon_right="anvil",
+                                   required=True,
+                                   on_release=lambda x: self.compute()
+                                   )
         g3.add_widget(self.field_t)
 
         # svg
         self.field_svg = MDTextField(id='Svg',
-                                   hint_text='Svg',
-                                   text=self.DEFAULT_SVG,
-                                   size_hint_x=None,
-                                   width=Window.width / 4,
-                                   icon_right="shield-lock-open-outline",
-                                   required=True,
-                                   on_release=lambda x: self.compute()
-                                   )
+                                     hint_text='Svg',
+                                     text=self.DEFAULT_SVG,
+                                     size_hint_x=None,
+                                     width=Window.width / 4,
+                                     icon_right="shield-lock-open-outline",
+                                     required=True,
+                                     on_release=lambda x: self.compute()
+                                     )
         g3.add_widget(self.field_svg)
 
         # Invulnerable save
         self.field_svg_invu = MDTextField(id='Svg invu',
-                                    hint_text='Svg invu',
-                                    text=self.DEFAULT_SVG_INVU,
-                                    size_hint_x=None,
-                                    width=Window.width / 4,
-                                    icon_right="shield-lock-outline",
-                                    required=True,
-                                    on_release=lambda x: self.compute()
-                                    )
+                                          hint_text='Svg invu',
+                                          text=self.DEFAULT_SVG_INVU,
+                                          size_hint_x=None,
+                                          width=Window.width / 4,
+                                          icon_right="shield-lock-outline",
+                                          required=True,
+                                          on_release=lambda x: self.compute()
+                                          )
         g3.add_widget(self.field_svg_invu)
 
         # FNP
@@ -564,7 +589,7 @@ class Main(MDApp):
             start_process = time()
 
             print("COMPUTE")
-            print("-"*200)
+            print("-" * 200)
 
             # 0/ Check content of fields (if wrong content message textbox and reset value to default)
             # ----------------------------------------------------------
@@ -609,6 +634,8 @@ class Main(MDApp):
             rr_wounds_ones = self.rr_wounds_one.active
             twin = self.rr_wound_all.active
             devastating_wounds = self.field_deva_wound.active
+            fish_hit = self.field_fish_hit
+            fish_wound = self.field_fish_w
 
             # 1.2/ Retrieve custom enemy datasheet
             self.add_custom_enemy()
@@ -622,30 +649,34 @@ class Main(MDApp):
 
                 # Compute the effect of the weapon on the current enemy
                 enemy_dead, remaining_hp = launch_workflow(nb_figs=nb_figs,
-                                                            crit=crit,
-                                                            weapon_a=weapon_a,
-                                                            hit_threshold=hit_threshold,
-                                                            weapon_s=weapon_s,
-                                                            weapon_ap=weapon_ap,
-                                                            weapon_d=weapon_d,
-                                                            sustain_hit=sustain_hit,
-                                                            bonus_wound=bonus_wound,
-                                                            torrent=torrent,
-                                                            rr_hit_ones=rr_hit_ones,
-                                                            rr_hit_all=rr_hit_all,
-                                                            lethal_hit=lethal_hit,
-                                                            rr_wounds_ones=rr_wounds_ones,
-                                                            twin=twin,
-                                                            devastating_wounds=devastating_wounds,
-                                                            enemy_toughness=current_carac["toughness"],
-                                                            svg_enemy=current_carac["svg"],
-                                                            svg_invul_enemy=current_carac["svg invul"],
-                                                            fnp_enemy=current_carac["feel no pain"],
-                                                            enemy_hp=current_carac["w"],
-                                                            verbose=self.LAUNCH_WORKFLOW_VERBOSE)
+                                                           crit=crit,
+                                                           weapon_a=weapon_a,
+                                                           hit_threshold=hit_threshold,
+                                                           weapon_s=weapon_s,
+                                                           weapon_ap=weapon_ap,
+                                                           weapon_d=weapon_d,
+                                                           sustain_hit=sustain_hit,
+                                                           bonus_wound=bonus_wound,
+                                                           torrent=torrent,
+                                                           rr_hit_ones=rr_hit_ones,
+                                                           rr_hit_all=rr_hit_all,
+                                                           lethal_hit=lethal_hit,
+                                                           rr_wounds_ones=rr_wounds_ones,
+                                                           twin=twin,
+                                                           devastating_wounds=devastating_wounds,
+                                                           fish_hit=fish_hit,
+                                                           fish_wound=fish_wound,
+                                                           enemy_toughness=current_carac["toughness"],
+                                                           svg_enemy=current_carac["svg"],
+                                                           svg_invul_enemy=current_carac["svg invul"],
+                                                           fnp_enemy=current_carac["feel no pain"],
+                                                           enemy_hp=current_carac["w"],
+                                                           verbose=self.LAUNCH_WORKFLOW_VERBOSE)
                 # Include `remaining_hp` in the average of deads
-                average_enemy_dead = compute_average_enemy_dead(enemy_dead=enemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
-                average_hp_lost = compute_average_hp_lost(enemy_dead=enemy_dead, remaining_hp=remaining_hp, enemy_hp=current_carac["w"])
+                average_enemy_dead = compute_average_enemy_dead(enemy_dead=enemy_dead, remaining_hp=remaining_hp,
+                                                                enemy_hp=current_carac["w"])
+                average_hp_lost = compute_average_hp_lost(enemy_dead=enemy_dead, remaining_hp=remaining_hp,
+                                                          enemy_hp=current_carac["w"])
 
                 print(f"Average dead on {name}: {average_enemy_dead}")
 
@@ -715,13 +746,13 @@ class Main(MDApp):
         column_data = list(result_dict.keys())
         # ['Name', 'average dead enemy', 'average HP lost']
 
-        column_data = [(x, self.TABLE_COL_W ) for x in column_data]
+        column_data = [(x, self.TABLE_COL_W) for x in column_data]
 
         widget_table = MDDataTable(
             column_data=column_data,
             row_data=self.__table_to_tuples(result_dict),  # ex of line: ("marine", 0, 0)
             use_pagination=False,
-            height= dp(65) * (Window.height / 10) * len(self.enemy_names),
+            height=dp(65) * (Window.height / 10) * len(self.enemy_names),
             size_hint_y=None,
             rows_num=len(self.enemy_names),  # 1 line per enemy
         )
@@ -776,6 +807,7 @@ class Main(MDApp):
         if self.rr_hit_ones.active:
             self.rr_hit_all.active = False
         self.compute()
+
     def _check_checkbox_rr_one_wound_and_compute(self):
         """
         When selecting "rr_wounds_one" > unselect "rr_wound_all"
@@ -785,6 +817,7 @@ class Main(MDApp):
         if self.rr_wounds_one.active:
             self.rr_wound_all.active = False
         self.compute()
+
     def _check_checkbox_rr_all_wound_and_compute(self):
         """
         When selecting "rr_wound_all" > unselect "rr_wounds_one"
@@ -794,6 +827,24 @@ class Main(MDApp):
         if self.rr_wound_all.active:
             self.rr_wounds_one.active = False
         self.compute()
+
+    def _check_checkbox_fish_hit_and_compute(self):
+        """
+        If impossible to re-roll all hit > impossible to fish hits
+        Else, compute
+        """
+        print("check_checkbox_fish_hit")
+        if not self.rr_hit_all.active:
+            self.field_fish_hit.active = False
+        self.compute()
+    def _check_checkbox_fish_wound_and_compute(self):
+        """
+        If impossible to re-roll all w > impossible to fish wounds
+        """
+        if not self.rr_wound_all.active:
+            self.field_fish_w.active = False
+        self.compute()
+
 
 if __name__ == "__main__":
     Main().run()

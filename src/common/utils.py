@@ -61,8 +61,11 @@ rr_wounds_ones=False
 twin=False
 # If True: enable devastating wounds (critical wounds raises
 devastating_wounds=False
-# If True (and if possible), rr all non critical hits (to fish sustain / lethal if enabled) or deva wound (if enabled)
-fish = False
+# If True (and if possible), rr all non critical hits (to fish sustain / lethal if enabled) > do not check suystain/lethal hit
+fish_hit = False
+# If True (and if possible), rr all non critical hits deva wound (if enabled) > do not check deva
+fish_wound = False
+
 
 # enemy
 # ---------------------------
