@@ -89,8 +89,13 @@ jobs:
           name: package
           path: bin/*.apk
 
-      # Create a new release
+      - name: Get package version
+        id: get_version
+        run: echo "VERSION=$(python -c \"exec(open('src/__version__.py').read());print(VERSION)\")" >> $GITHUB_ENV
+
+      # Create a new github release when a new tag is pushed
       - name: Upload Release Asset
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*.apk

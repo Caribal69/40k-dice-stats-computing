@@ -68,6 +68,16 @@ sed -i "s|version-[0-9.]*-blue.svg|version-${new_version}-blue.svg|" README.md
 # --------------------------
 git add .
 git commit -m "$NEW_COMMIT_MESSAGE"
+
+# Ask user if they want to deploy (create and push a tag)
+read -p "Deploy new release (${new_version})? (yes/no) " DEPLOY_ANSWER
+
+if [ "$DEPLOY_ANSWER" = "yes" ]; then
+  git tag "$new_version"
+  git push origin "$new_version"
+fi
+
+
 git push
 
 deactivate
