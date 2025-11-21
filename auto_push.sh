@@ -68,16 +68,17 @@ sed -i "s|version-[0-9.]*-blue.svg|version-${new_version}-blue.svg|" README.md
 # --------------------------
 git add .
 git commit -m "$NEW_COMMIT_MESSAGE"
+git push
+
+echo VERSION="$(python -c "exec(open('src/__version__.py').read());print(VERSION)")"
 
 # Ask user if they want to deploy (create and push a tag)
-read -p "Deploy new release (${new_version})? (yes/no) " DEPLOY_ANSWER
+read -p "Deploy new release (${new_version})? (y/n) - default n " DEPLOY_ANSWER
+DEPLOY_ANSWER=${DEPLOY_ANSWER:-no}
 
 if [ "$DEPLOY_ANSWER" = "yes" ]; then
   git tag "$new_version"
   git push origin "$new_version"
 fi
-
-
-git push
 
 deactivate

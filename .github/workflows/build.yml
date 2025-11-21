@@ -91,7 +91,7 @@ jobs:
 
       - name: Get package version
         id: get_version
-        run: echo "VERSION=$(python -c \"exec(open('src/__version__.py').read());print(VERSION)\")" >> $GITHUB_ENV
+        run: echo VERSION="$(python -c "exec(open('src/__version__.py').read());print(VERSION)")" >> $GITHUB_ENV
 
       # Create a new github release when a new tag is pushed
       - name: Upload Release Asset
